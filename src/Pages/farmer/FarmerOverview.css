@@ -1,0 +1,128 @@
+/* FarmerOverview.css */
+
+.stat-icon-large {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-value-large {
+  font-weight: 700;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.stat-label-small {
+  font-size: 0.82rem;
+}
+
+@media (max-width: 350px) {
+  .stat-value-large { font-size: 1.1rem; }
+  .temp-value-display { font-size: 1.5rem; }
+  .forecast-item { min-width: 100% !important; padding: 0.5rem !important; }
+  .forecast-day-name { min-width: 60px; font-size: 0.75rem; }
+  .weather-banner { padding: 1rem !important; }
+}
+
+.stat-sub-text {
+  font-size: 0.75rem;
+  margin-top: 0.2rem;
+}
+
+.weather-banner {
+  background: linear-gradient(135deg, var(--as-dark-green), var(--as-accent-green));
+  border-radius: 20px;
+}
+
+.weather-banner-title {
+  font-size: clamp(1.1rem, 3vw, 1.6rem);
+}
+
+.weather-banner-desc {
+  font-size: 0.85rem;
+  color: var(--as-light-green) !important;
+}
+
+.temp-badge-box {
+  background: rgba(82, 183, 136, 0.15);
+  border: 1px solid rgba(82, 183, 136, 0.3);
+  border-radius: 14px;
+  min-width: 100px;
+}
+
+.temp-value-display {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.forecast-item {
+  border-color: var(--as-bg-light) !important;
+  gap: 0.5rem;
+  min-width: 300px;
+}
+
+.forecast-icon {
+  font-size: 1.2rem;
+}
+
+.forecast-day-name {
+  font-size: 0.85rem;
+  min-width: 85px;
+}
+
+.forecast-temp {
+  font-size: 0.85rem;
+}
+
+.forecast-rain {
+  font-size: 0.78rem;
+  color: #4db6e4 !important;
+}
+
+.saved-item-card {
+  background: var(--as-bg-light) !important;
+  border: none !important;
+}
+
+.saved-item-title {
+  font-size: 0.88rem;
+}
+
+.saved-item-note {
+  font-size: 0.75rem;
+}
+
+.empty-state-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-text {
+  font-size: 0.85rem;
+}
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+/* Tablet and below → 2 per row */
+@media (max-width: 992px) {
+  .overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Ultra small → still 2 per row but tighter gap */
+@media (max-width: 360px) {
+  .overview-grid {
+    gap: 0.6rem;
+  }
+}
+
+/* Absolute minimum (320px) — still 2 per row, just smaller padding */
+@media (max-width: 320px) {
+  .overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+}

@@ -1,0 +1,96 @@
+/* SaveDateModal.css */
+
+.as-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.as-modal-card {
+  background: #0d2818;
+  border: 1px solid rgba(82, 183, 136, 0.3);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 100%;
+  maxWidth: 420px;
+  position: relative;
+}
+
+.as-modal-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1.2rem;
+  background: none;
+  border: none;
+  color: #74c69d;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.as-modal-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.as-modal-title {
+  color: #d8f3dc;
+  font-family: 'Georgia', serif;
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+
+.as-modal-subtitle {
+  color: #74c69d;
+  font-size: 0.88rem;
+  margin-bottom: 1.5rem;
+  font-family: sans-serif;
+}
+
+.as-modal-label {
+  color: #95d5b2;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: sans-serif;
+}
+
+.as-modal-label-optional {
+  color: #52b788;
+  font-weight: 400;
+}
+
+.as-modal-textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(82, 183, 136, 0.25);
+  border-radius: 12px;
+  color: #d8f3dc;
+  padding: 0.75rem 1rem;
+  font-size: 0.92rem;
+  font-family: sans-serif;
+  resize: none;
+  outline: none;
+}
+
+.as-modal-btn-cancel {
+  border: 1px solid rgba(82, 183, 136, 0.25) !important;
+  color: #74c69d !important;
+  background: transparent !important;
+  border-radius: 12px !important;
+  font-family: sans-serif !important;
+}
+
+.as-modal-btn-save {
+  background: linear-gradient(135deg, #52b788, #1b4332) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  font-family: sans-serif !important;
+}

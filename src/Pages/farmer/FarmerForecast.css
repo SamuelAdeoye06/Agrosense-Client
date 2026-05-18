@@ -1,0 +1,102 @@
+/* FarmerForecast.css */
+
+.forecast-page-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 350px) {
+  .forecast-page-header { gap: 0.5rem; margin-bottom: 1rem; }
+  .forecast-icon-large { font-size: 2rem; }
+  .forecast-temp-value { font-size: 1.2rem; }
+  .forecast-stat-label, .forecast-stat-value { font-size: 0.7rem; }
+}
+
+.forecast-location-meta {
+  color: var(--as-soft-green);
+  font-size: 0.85rem;
+}
+
+.forecast-card-detailed {
+  background: white;
+  border-radius: 20px;
+  padding: 1.2rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 2px solid transparent;
+}
+
+.forecast-card-good {
+  border-color: rgba(82, 183, 136, 0.2);
+}
+
+.forecast-card-poor {
+  border-color: rgba(220, 53, 69, 0.1);
+}
+
+.forecast-day-label {
+  color: var(--as-accent-green);
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.forecast-icon-large {
+  font-size: 2.5rem;
+  text-align: center;
+  margin: 0.3rem 0;
+}
+
+.forecast-temp-value {
+  color: var(--as-dark-green);
+  font-weight: 700;
+  font-size: 1.4rem;
+  text-align: center;
+  font-family: 'Georgia', serif;
+}
+
+.forecast-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.3rem;
+}
+
+.forecast-stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forecast-stat-label {
+  color: var(--as-soft-green);
+  font-size: 0.75rem;
+}
+
+.forecast-stat-value {
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+.save-date-btn {
+  font-weight: 700 !important;
+  font-size: 0.82rem !important;
+  margin-top: auto;
+}
+
+.save-date-btn-saved {
+  background: rgba(82, 183, 136, 0.1) !important;
+  color: var(--as-primary-green) !important;
+  border: 1px solid rgba(82, 183, 136, 0.3) !important;
+  cursor: default !important;
+}
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}

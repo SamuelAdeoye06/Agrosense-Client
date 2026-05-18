@@ -1,0 +1,49 @@
+/* Navbar.css */
+
+.as-navbar {
+  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%) !important;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+.as-navbar-logo-text {
+  font-family: 'Georgia', serif;
+  font-weight: bold;
+  color: #b7e4c7;
+  font-size: 1.3rem;
+}
+
+@media (max-width: 350px) {
+  .as-navbar-logo-text { font-size: 1.1rem; }
+  .as-navbar { padding-left: 0.5rem !important; padding-right: 0.5rem !important; }
+}
+
+.as-navbar-toggler {
+  color: #b7e4c7 !important;
+  box-shadow: none !important;
+}
+
+.as-nav-link {
+  color: #d8f3dc !important;
+  font-weight: 500;
+}
+
+.as-nav-link:hover {
+  color: var(--as-primary-green) !important;
+}
+
+.as-navbar-btn-outline {
+  border-color: var(--as-primary-green) !important;
+  color: var(--as-primary-green) !important;
+  border-radius: 20px !important;
+}
+
+.as-navbar-btn-outline:hover {
+  background: var(--as-primary-green) !important;
+  color: white !important;
+}
+
+.as-navbar-btn-primary {
+  background: linear-gradient(135deg, var(--as-primary-green), var(--as-dark-green)) !important;
+  border-radius: 20px !important;
+  border: none !important;
+}

@@ -1,0 +1,114 @@
+/* Landing.css */
+
+.landing-wrapper {
+  background: #081c15;
+  min-height: 100vh;
+  color: #d8f3dc;
+}
+
+.landing-section-dark {
+  padding: 5rem 0;
+  background: #0d2818;
+}
+
+.landing-section-black {
+  padding: 5rem 0;
+  background: #081c15;
+}
+
+@media (max-width: 576px) {
+  .landing-section-dark, .landing-section-black { padding: 3rem 0; }
+}
+
+@media (max-width: 350px) {
+  .landing-section-dark, .landing-section-black { padding: 2.5rem 0; }
+}
+
+.landing-badge {
+  background: rgba(82, 183, 136, 0.1);
+  color: #52b788;
+  border: 1px solid rgba(82, 183, 136, 0.25);
+  border-radius: 20px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.landing-title {
+  font-family: 'Georgia', serif;
+  color: #d8f3dc;
+  font-size: clamp(1.5rem, 4vw, 2.8rem);
+  font-weight: bold;
+}
+
+.landing-subtitle {
+  color: #74c69d;
+  max-width: 500px;
+  margin: 0.8rem auto 0;
+}
+
+.landing-subtitle-constrained {
+  max-width: 440px;
+}
+
+.step-card {
+  background: rgba(82, 183, 136, 0.04);
+  border: 1px solid rgba(82, 183, 136, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  height: 100%;
+}
+
+@media (max-width: 350px) {
+  .step-card { padding: 1.25rem; }
+  .cta-emoji { font-size: 2.5rem; }
+  .cta-desc { font-size: 0.95rem; }
+  .cta-btn-large { width: 100%; font-size: 0.95rem !important; }
+}
+
+.step-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: rgba(82, 183, 136, 0.3);
+  font-family: 'Georgia', serif;
+  margin-bottom: 0.5rem;
+}
+
+.step-title {
+  color: #b7e4c7;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+.step-desc {
+  color: #74c69d;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.landing-cta-banner {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #1b4332 100%);
+  text-align: center;
+}
+
+.cta-emoji {
+  font-size: 3rem;
+}
+
+.cta-desc {
+  color: #95d5b2;
+  font-size: 1.05rem;
+  max-width: 440px;
+  margin: 0 auto 2rem;
+}
+
+.cta-btn-large {
+  background: linear-gradient(135deg, #52b788, #1b4332) !important;
+  color: white !important;
+  border-radius: 30px !important;
+  font-weight: 700 !important;
+  font-size: 1.05rem !important;
+  border: none !important;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3) !important;
+}
