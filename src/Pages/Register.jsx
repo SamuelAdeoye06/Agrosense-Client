@@ -21,6 +21,7 @@ const registerSchema = Yup.object({
     .trim()
     .min(3, 'Please enter a valid location')
     .required('Farm location is required'),
+  cropProfiles: Yup.array().min(0),
   password: Yup.string()
     .matches(
       passwordRegex,
@@ -45,6 +46,7 @@ const Register = () => {
       farmLocation: '',
       password: '',
       confirmPassword: '',
+      cropProfiles: [],
     },
     validationSchema: registerSchema,
     onSubmit: async (values) => {
@@ -56,6 +58,7 @@ const Register = () => {
           email:        values.email.trim(),
           password:     values.password,
           farmLocation: values.farmLocation.trim(),
+          cropProfiles: values.cropProfiles, 
         })
       } catch {
         // error already set in AuthContext
@@ -210,7 +213,49 @@ const Register = () => {
                   </p>
                 )}
               </div>
-
+              {/* Crop Categories */}
+              <div className="mb-3">
+                  <label className="auth-label">
+                      What do you grow?
+                      <span className="as-text-soft fs-7 fw-normal ms-2">(select all that apply)</span>
+                  </label>
+                  <div className="crop-profile-grid">
+                      {[
+                          { value: "grains",     icon: "🌾", label: "Grains & Cereals",   sub: "maize, rice, sorghum, millet" },
+                          { value: "tubers",     icon: "🥔", label: "Tubers & Roots",      sub: "cassava, yam, cocoyam" },
+                          { value: "legumes",    icon: "🫘", label: "Legumes & Pulses",    sub: "beans, cowpea, groundnut" },
+                          { value: "vegetables", icon: "🍅", label: "Vegetables",          sub: "tomatoes, peppers, okra" },
+                          { value: "plantains",  icon: "🍌", label: "Plantains & Bananas", sub: "plantain, banana" },
+                          { value: "fruits",     icon: "🍊", label: "Fruits",              sub: "mango, citrus, pawpaw" },
+                          { value: "cash_crops", icon: "🌴", label: "Cash Crops",          sub: "cocoa, oil palm, rubber" },
+                          { value: "herbs",      icon: "🌿", label: "Herbs & Spices",      sub: "ginger, turmeric, garlic" },
+                      ].map((cat) => {
+                          const selected = formik.values.cropProfiles.includes(cat.value)
+                          const toggle = () => {
+                              const current = formik.values.cropProfiles
+                              formik.setFieldValue(
+                                  "cropProfiles",
+                                  selected ? current.filter(c => c !== cat.value) : [...current, cat.value]
+                              )
+                          }
+                          return (
+                              <button
+                                  key={cat.value}
+                                  type="button"
+                                  onClick={toggle}
+                                  className={`crop-profile-btn ${selected ? 'crop-profile-btn-selected' : ''}`}
+                              >
+                                  <span className="crop-btn-icon">{cat.icon}</span>
+                                  <div>
+                                      <div className="crop-btn-label">{cat.label}</div>
+                                      <div className="crop-btn-sub">{cat.sub}</div>
+                                  </div>
+                                  {selected && <i className="bi bi-check-circle-fill crop-btn-check"></i>}
+                              </button>
+                          )
+                      })}
+                  </div>
+              </div>
               {/* Password */}
               <div className="mb-3">
                 <label className="auth-label">Password</label>

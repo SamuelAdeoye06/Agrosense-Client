@@ -125,3 +125,25 @@
   font-size: 0.85rem;
   flex-shrink: 0;
 }
+.saved-card-crop {
+    font-size: 0.78rem;
+    color: var(--as-primary-green);
+    font-weight: 500;
+}
+
+.saved-card-recommendation {
+    font-size: 0.78rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.recommendation-good {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--as-primary-green);
+}
+
+.recommendation-poor {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+}
