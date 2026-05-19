@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useFarmer } from '../../context/DashboardContext'
 import { useAuth } from '../../context/AuthContext'
 import ProfileImageModal from '../../components/ProfileImageModal'
 import api from '../../api/axios'
 import './FarmerSettings.css'
+import LocationSelector from '../../components/LocationSelector'
+import { STATES, getCities } from '../../data/nigeriaLocations'
+
 
 // ── Crop categories list ──
 const CROP_CATEGORIES = [
@@ -20,16 +23,21 @@ const CROP_CATEGORIES = [
 // ── CropProfileSelector sub-component ──
 // Lives in this file so it can be used directly below
 const CropProfileSelector = ({ selected, onChange }) => {
-    // local copy so changes don't fire until Save is clicked
-    const [local, setLocal]   = useState(selected || [])
-    const [saving, setSaving] = useState(false)
+    const [local, setLocal]     = useState([])
+    const [saving, setSaving]   = useState(false)
     const [success, setSuccess] = useState(false)
+
+    // sync from props when cropProfiles loads from context
+    // (context loads async so initial render may have empty array)
+    useEffect(() => {
+        if (selected && selected.length > 0) {
+            setLocal(selected)
+        }
+    }, [selected])
 
     const toggle = (value) => {
         setLocal((prev) =>
-            prev.includes(value)
-                ? prev.filter((c) => c !== value)
-                : [...prev, value]
+            prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
         )
     }
 
@@ -58,25 +66,19 @@ const CropProfileSelector = ({ selected, onChange }) => {
                                 <div className="crop-btn-label">{cat.label}</div>
                                 <div className="crop-btn-sub">{cat.sub}</div>
                             </div>
-                            {isSelected && (
-                                <i className="bi bi-check-circle-fill crop-btn-check"></i>
-                            )}
+                            {isSelected && <i className="bi bi-check-circle-fill crop-btn-check"></i>}
                         </button>
                     )
                 })}
             </div>
 
             {success && (
-                <div className="as-badge-active p-2 rounded mb-2 d-inline-flex align-items-center gap-2">
+                <div className="as-badge-active p-2 rounded mb-2 d-inline-flex align-items-center gap-2" style={{ fontSize: '0.8rem' }}>
                     <i className="bi bi-check-circle"></i> Crop profiles saved!
                 </div>
             )}
 
-            <button
-                onClick={handleSave}
-                disabled={saving}
-                className="as-btn as-btn-primary px-4 py-2"
-            >
+            <button onClick={handleSave} disabled={saving} className="as-btn as-btn-primary px-4 py-2">
                 {saving
                     ? <><span className="spinner-border spinner-border-sm me-2" />Saving...</>
                     : 'Save Crop Profiles'
@@ -88,7 +90,7 @@ const CropProfileSelector = ({ selected, onChange }) => {
 
 // ── Main FarmerSettings component ──
 const FarmerSettings = () => {
-    const { farmerName, setFarmerName, location, setLocation, cropProfiles, setCropProfiles } = useFarmer()
+    const { farmerName, setFarmerName, location, setLocation, cropProfiles, setCropProfiles, loadWeather } = useFarmer()  
     const { user, logout, deleteAccount } = useAuth()
 
     const [showAvatarModal, setShowAvatarModal] = useState(false)
@@ -96,7 +98,8 @@ const FarmerSettings = () => {
     const [tempName, setTempName]               = useState(farmerName)
     const [nameSaved, setNameSaved]             = useState(false)
     const [editingLocation, setEditingLocation] = useState(false)
-    const [tempLocation, setTempLocation]       = useState(location)
+    const [tempState, setTempState]             = useState('')
+    const [tempCity, setTempCity]               = useState('')    
     const [showDeleteModal, setShowDeleteModal] = useState(false)
 
     // Password state
@@ -147,9 +150,20 @@ const FarmerSettings = () => {
         setTimeout(() => setNameSaved(false), 2500)
     }
 
-    const handleLocationSave = () => {
-        setLocation(tempLocation)
-        setEditingLocation(false)
+    const handleLocationSave = async () => {
+        if (!tempState || !tempCity) return
+        const newLocation = `${tempCity}, ${tempState}`
+        try {
+            await api.patch('/auth/update-profile', { farmLocation: newLocation })
+            setLocation(newLocation)
+            // clear weather cache so it re-geocodes the new location
+            await api.post('/weather/refresh')
+            setEditingLocation(false)
+            // reload weather for new location
+            loadWeather()
+        } catch (err) {
+            console.error('Failed to save location:', err.message)
+        }
     }
 
     // called by CropProfileSelector when farmer saves
@@ -250,18 +264,42 @@ const FarmerSettings = () => {
                         <h6 className="as-text-primary fw-bold mb-3">
                             <i className="bi bi-geo-alt me-2 as-text-primary"></i>Farm Location
                         </h6>
+
                         {editingLocation ? (
                             <div>
-                                <input type="text" value={tempLocation} onChange={(e) => setTempLocation(e.target.value)} className="as-input mb-3" />
-                                <div className="d-flex gap-2">
-                                    <button onClick={handleLocationSave} className="as-btn as-btn-primary btn-sm px-3 py-1">Save</button>
-                                    <button onClick={() => setEditingLocation(false)} className="as-btn as-btn-outline btn-sm px-3 py-1">Cancel</button>
+                                <LocationSelector
+                                    selectedState={tempState}
+                                    selectedCity={tempCity}
+                                    onStateChange={(s) => { setTempState(s); setTempCity('') }}
+                                    onCityChange={setTempCity}
+                                    states={STATES}
+                                    getCities={getCities}
+                                />
+                                <div className="d-flex gap-2 mt-3">
+                                    <button
+                                        onClick={handleLocationSave}
+                                        disabled={!tempState || !tempCity}
+                                        className="as-btn as-btn-primary btn-sm px-3 py-1"
+                                    >
+                                        Save
+                                    </button>
+                                    <button
+                                        onClick={() => setEditingLocation(false)}
+                                        className="as-btn as-btn-outline btn-sm px-3 py-1"
+                                    >
+                                        Cancel
+                                    </button>
                                 </div>
                             </div>
                         ) : (
                             <div className="d-flex justify-content-between align-items-center">
                                 <span className="as-text-accent fw-bold">📍 {location}</span>
-                                <button onClick={() => setEditingLocation(true)} className="btn btn-sm p-0 as-text-primary"><i className="bi bi-pencil"></i></button>
+                                <button
+                                    onClick={() => setEditingLocation(true)}
+                                    className="btn btn-sm p-0 as-text-primary"
+                                >
+                                    <i className="bi bi-pencil"></i>
+                                </button>
                             </div>
                         )}
                     </div>
