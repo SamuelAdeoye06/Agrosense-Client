@@ -30,9 +30,7 @@ const CropProfileSelector = ({ selected, onChange }) => {
     // sync from props when cropProfiles loads from context
     // (context loads async so initial render may have empty array)
     useEffect(() => {
-        if (selected && selected.length > 0) {
-            setLocal(selected)
-        }
+        setLocal(selected || [])
     }, [selected])
 
     const toggle = (value) => {
@@ -91,7 +89,7 @@ const CropProfileSelector = ({ selected, onChange }) => {
 // ── Main FarmerSettings component ──
 const FarmerSettings = () => {
     const { farmerName, setFarmerName, location, setLocation, cropProfiles, setCropProfiles, loadWeather } = useFarmer()  
-    const { user, logout, deleteAccount } = useAuth()
+    const { user, logout, deleteAccount, updateUser } = useAuth()
 
     const [showAvatarModal, setShowAvatarModal] = useState(false)
     const [editingName, setEditingName]         = useState(false)
@@ -142,24 +140,29 @@ const FarmerSettings = () => {
         }
     }
 
-    const handleNameSave = () => {
+    const handleNameSave = async () => {
         if (!tempName.trim()) return
-        setFarmerName(tempName)
-        setEditingName(false)
-        setNameSaved(true)
-        setTimeout(() => setNameSaved(false), 2500)
-    }
+        try {
+            const { data } = await api.patch('/auth/update-profile', { fullName: tempName.trim() })
+            setFarmerName(tempName)
+            updateUser(data.user)
+            setEditingName(false)
+            setNameSaved(true)
+            setTimeout(() => setNameSaved(false), 2500)
+        } catch (err) {
+            console.error('Failed to save name:', err.message)
+        }
+    }   
 
     const handleLocationSave = async () => {
         if (!tempState || !tempCity) return
         const newLocation = `${tempCity}, ${tempState}`
         try {
-            await api.patch('/auth/update-profile', { farmLocation: newLocation })
+            const { data } = await api.patch('/auth/update-profile', { farmLocation: newLocation })
             setLocation(newLocation)
-            // clear weather cache so it re-geocodes the new location
+            updateUser(data.user)  // ✅ sync localStorage
             await api.post('/weather/refresh')
             setEditingLocation(false)
-            // reload weather for new location
             loadWeather()
         } catch (err) {
             console.error('Failed to save location:', err.message)
@@ -169,8 +172,9 @@ const FarmerSettings = () => {
     // called by CropProfileSelector when farmer saves
     const handleCropProfileSave = async (newProfiles) => {
         try {
-            await api.patch('/auth/update-profile', { cropProfiles: newProfiles })
+            const { data } = await api.patch('/auth/update-profile', { cropProfiles: newProfiles })
             setCropProfiles(newProfiles)
+            updateUser(data.user)  // ✅ sync localStorage so refresh works
         } catch (err) {
             console.error("Failed to save crop profiles:", err.message)
         }

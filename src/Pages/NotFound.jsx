@@ -1,72 +1,141 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import './Login.css'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const NotFound = () => {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+
+  const dashboardPath = user
+    ? user.role === 'farmer'
+      ? '/dashboard/overview'
+      : '/admin/overview'
+    : null
+
   return (
-    <div className="auth-page-container flex-column align-items-center justify-content-center text-center p-4">
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f0f7f4 0%, #e8f5e9 100%)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem',
+      textAlign: 'center',
+      fontFamily: 'Arial, sans-serif',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
 
       {/* Background blobs */}
-      <div className="auth-circle-1 notfound-blob-1" />
-      <div className="auth-circle-2 notfound-blob-2" />
-      <div className="auth-circle-3 notfound-blob-3" />
+      <div style={{
+        position: 'absolute', top: '-80px', left: '-80px',
+        width: '300px', height: '300px', borderRadius: '50%',
+        background: 'rgba(45,106,79,0.08)', pointerEvents: 'none'
+      }} />
+      <div style={{
+        position: 'absolute', bottom: '-60px', right: '-60px',
+        width: '250px', height: '250px', borderRadius: '50%',
+        background: 'rgba(45,106,79,0.06)', pointerEvents: 'none'
+      }} />
 
-      {/* Logo top */}
-      <Link to="/" className="d-flex align-items-center gap-2 text-decoration-none position-absolute top-0 start-0 m-4">
-        <div className="auth-logo-box notfound-logo-box">🌱</div>
-        <span className="auth-logo-text fs-6">AgroSense</span>
+      {/* Logo */}
+      <Link to="/" style={{
+        position: 'absolute', top: '1.5rem', left: '1.5rem',
+        display: 'flex', alignItems: 'center', gap: '8px',
+        textDecoration: 'none'
+      }}>
+        <div style={{
+          width: '36px', height: '36px', borderRadius: '8px',
+          background: '#2d6a4f', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', fontSize: '18px'
+        }}>🌱</div>
+        <span style={{ fontWeight: 700, color: '#1b4332', fontSize: '1.1rem' }}>AgroSense</span>
       </Link>
 
       {/* Main content */}
-      <div className="position-relative z-1 notfound-content-wrapper">
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: '480px' }}>
 
-        {/* Big illustration */}
-        <div className="fs-1 mb-2">🌾</div>
+        {/* Illustration */}
+        <div style={{ fontSize: '5rem', marginBottom: '0.5rem', lineHeight: 1 }}>🌾</div>
 
-        {/* 404 number */}
-        <h1 className="display-1 fw-bold mb-3 notfound-404-text">
-          404
-        </h1>
+        {/* 404 */}
+        <h1 style={{
+          fontSize: 'clamp(5rem, 15vw, 8rem)',
+          fontWeight: 900,
+          color: '#1b4332',
+          margin: '0',
+          lineHeight: 1,
+          letterSpacing: '-4px',
+          opacity: 0.15
+        }}>404</h1>
 
-        {/* Thin divider line */}
-        <div className="as-header-line mx-auto mb-4 notfound-divider" />
+        {/* Divider */}
+        <div style={{
+          width: '60px', height: '4px',
+          background: 'linear-gradient(90deg, #2d6a4f, #52b788)',
+          borderRadius: '2px', margin: '1.25rem auto'
+        }} />
 
-        <h2 className="auth-welcome-title fs-3 mb-3">
-          Looks like this field is empty
+        <h2 style={{
+          fontSize: '1.5rem', fontWeight: 700,
+          color: '#1b4332', marginBottom: '0.75rem'
+        }}>
+          This field is empty
         </h2>
 
-        <p className="auth-welcome-desc mx-auto mb-5 notfound-desc">
-          The page you're looking for doesn't exist or may have been moved. Let's get you back to your farm dashboard.
+        <p style={{
+          color: '#6b7280', lineHeight: 1.7,
+          marginBottom: '2rem', fontSize: '0.95rem'
+        }}>
+          The page you're looking for doesn't exist or may have been moved.
+          Let's get you back where you belong.
         </p>
 
-        {/* CTA Buttons */}
-        <div className="d-flex flex-wrap justify-content-center gap-3">
-          <Link to="/" className="btn px-5 py-3 auth-submit-btn rounded-pill">
-            <i className="bi bi-house me-2"></i>Back to Home
-          </Link>
+        {/* Buttons */}
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          {dashboardPath ? (
+            <Link to={dashboardPath} style={{
+              background: 'linear-gradient(135deg, #2d6a4f, #52b788)',
+              color: 'white', textDecoration: 'none',
+              padding: '12px 28px', borderRadius: '50px',
+              fontWeight: 600, fontSize: '0.95rem',
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              boxShadow: '0 4px 15px rgba(45,106,79,0.3)'
+            }}>
+              <i className="bi bi-grid"></i> Back to Dashboard
+            </Link>
+          ) : (
+            <Link to="/login" style={{
+              background: 'linear-gradient(135deg, #2d6a4f, #52b788)',
+              color: 'white', textDecoration: 'none',
+              padding: '12px 28px', borderRadius: '50px',
+              fontWeight: 600, fontSize: '0.95rem',
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+              boxShadow: '0 4px 15px rgba(45,106,79,0.3)'
+            }}>
+              <i className="bi bi-box-arrow-in-right"></i> Sign In
+            </Link>
+          )}
 
-          <Link to="/login" className="btn px-5 py-3 as-btn-outline rounded-pill text-success border-success">
-            <i className="bi bi-box-arrow-in-right me-2"></i>Sign In
-          </Link>
+          <button onClick={() => navigate(-1)} style={{
+            background: 'transparent',
+            color: '#2d6a4f', border: '2px solid #2d6a4f',
+            padding: '12px 28px', borderRadius: '50px',
+            fontWeight: 600, fontSize: '0.95rem', cursor: 'pointer',
+            display: 'inline-flex', alignItems: 'center', gap: '8px'
+          }}>
+            <i className="bi bi-arrow-left"></i> Go Back
+          </button>
         </div>
-
-        {/* Help text */}
-        <p className="as-text-soft fs-7 mt-5">
-          If you think this is a mistake, please{' '}
-          <a href="#" className="as-text-primary text-decoration-none fw-bold">
-            contact support
-          </a>
-        </p>
-
       </div>
 
-      {/* Bottom strip */}
-      <div className="position-absolute bottom-0 mb-4">
-        <p className="as-text-dark fs-7 opacity-50 m-0">
-          © 2026 AgroSense. All rights reserved.
-        </p>
-      </div>
-
+      {/* Footer */}
+      <p style={{
+        position: 'absolute', bottom: '1.5rem',
+        color: '#9ca3af', fontSize: '0.8rem', margin: 0
+      }}>
+        © 2026 AgroSense. All rights reserved.
+      </p>
     </div>
   )
 }
