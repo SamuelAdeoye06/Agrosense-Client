@@ -4,35 +4,34 @@ import Cookies from 'universal-cookie'
 import { jwtDecode } from 'jwt-decode'
 import api from '../api/axios'
 
-const cookies  = new Cookies()
-const AuthContext = createContext(null)
-
-const COOKIE_NAME = 'agrosense_token'
+const cookies     = new Cookies()
+const AuthContext  = createContext(null)
+const COOKIE_NAME  = 'agrosense_token'
+const USER_KEY     = 'agrosense_user'  // ← one consistent key throughout
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser]       = useState(null)
   const [token, setToken]     = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
-  const navigate  = useNavigate()
-  const location  = useLocation()
+  const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
     setError(null)
   }, [location.pathname])
 
-  // on app load — restore from cookie
+  // on app load — restore session from cookie + localStorage
   useEffect(() => {
     const savedToken = cookies.get(COOKIE_NAME)
-    const savedUser  = localStorage.getItem('user')
+    const savedUser  = localStorage.getItem(USER_KEY)
 
     if (savedToken && savedUser) {
       try {
-        const decoded = jwtDecode(savedToken)
+        const decoded   = jwtDecode(savedToken)
         const isExpired = decoded.exp * 1000 < Date.now()
 
         if (isExpired) {
-          // token expired — clear everything
           clearSession()
         } else {
           setToken(savedToken)
@@ -45,21 +44,20 @@ export const AuthProvider = ({ children }) => {
     setLoading(false)
   }, [])
 
-  const saveSession = (data) => {
-    // store token in cookie with 7 day expiry
-    cookies.set(COOKIE_NAME, data.token, {
-      path:    '/',
-      maxAge:  60 * 60 * 24 * 7,   // 7 days in seconds
-      sameSite: 'lax',
+  const saveSession = (token, userData) => {
+    const isAdmin = userData.role === 'admin' || userData.role === 'super_admin'
+    cookies.set(COOKIE_NAME, token, {
+      path: '/',
+      ...(isAdmin ? {} : { maxAge: 60 * 60 * 24 * 7 })
     })
-    localStorage.setItem('user', JSON.stringify(data.user))
-    setToken(data.token)
-    setUser(data.user)
+    localStorage.setItem(USER_KEY, JSON.stringify(userData))
+    setToken(token)
+    setUser(userData)
   }
 
   const clearSession = () => {
     cookies.remove(COOKIE_NAME, { path: '/' })
-    localStorage.removeItem('user')
+    localStorage.removeItem(USER_KEY)
     setToken(null)
     setUser(null)
   }
@@ -68,7 +66,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null)
       const { data } = await api.post('/auth/register', formData)
-      saveSession(data)
+      saveSession(data.token, data.user)   // ✅ correct
       navigate('/dashboard/overview')
     } catch (err) {
       const message = err.response?.data?.message || 'Registration failed. Please try again.'
@@ -81,7 +79,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setError(null)
       const { data } = await api.post('/auth/login', formData)
-      saveSession(data)
+      saveSession(data.token, data.user)   // ✅ correct
 
       if (data.user.role === 'super_admin' || data.user.role === 'admin') {
         navigate('/admin/overview')
@@ -100,28 +98,22 @@ export const AuthProvider = ({ children }) => {
     navigate('/login')
   }
 
-  // update user state after avatar/profile changes
   const updateUser = (updatedUser) => {
     setUser(updatedUser)
-    localStorage.setItem('user', JSON.stringify(updatedUser))
+    localStorage.setItem(USER_KEY, JSON.stringify(updatedUser))  // ✅ consistent key
   }
 
-  // upload avatar — sends base64 to backend
   const uploadAvatar = async (base64Image, isRetry = false) => {
     try {
-      const { data } = await api.post('/auth/upload-avatar', {
-        profileImage: base64Image
-      })
+      const { data } = await api.post('/auth/upload-avatar', { profileImage: base64Image })
       updateUser(data.user)
       return { success: true }
     } catch (err) {
-      // auto-retry once if it fails on "first try"
       if (!isRetry) {
         console.warn('Avatar upload failed, retrying once...')
-        await new Promise(resolve => setTimeout(resolve, 1500)) // wait 1.5s
+        await new Promise(resolve => setTimeout(resolve, 1500))
         return uploadAvatar(base64Image, true)
       }
-
       return {
         success: false,
         message: err.response?.data?.message || 'Failed to upload image'
@@ -141,9 +133,9 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ 
-      user, token, loading, error, setError, 
-      register, login, logout, updateUser, uploadAvatar, deleteAccount 
+    <AuthContext.Provider value={{
+      user, token, loading, error, setError,
+      register, login, logout, updateUser, uploadAvatar, deleteAccount
     }}>
       {children}
     </AuthContext.Provider>

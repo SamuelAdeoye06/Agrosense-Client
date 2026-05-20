@@ -59,9 +59,9 @@ const FarmerOverview = () => {
     const statCards = [
         {
             icon:  '🌡',
-            label: 'Temperature',
+            label: 'Temperature Now',
             value: `${todayWeather.temp}°C`,
-            sub:   `Feels like ${todayWeather.feelsLike ?? todayWeather.temp}°C`,
+            sub:   `Today's range: ${forecast[0]?.tempMin ?? '--'}°C – ${forecast[0]?.tempMax ?? '--'}°C`,
             color: '#ff8c42'
         },
         {

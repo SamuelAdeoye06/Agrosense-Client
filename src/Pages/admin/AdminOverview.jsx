@@ -6,7 +6,7 @@ import './AdminOverview.css'
 const AdminOverview = () => {
     const {
         users, usersLoading,
-        admins,
+        admins, adminsLoading,
         totalSavedDates, statsLoading,
         isSuperAdmin
     } = useAdmin()
@@ -32,8 +32,8 @@ const AdminOverview = () => {
             color: '#74c69d'
         },
         isSuperAdmin
-            ? { icon: '🛡️', label: 'Total Admins',    value: admins.length,  color: '#1b4332' }
-            : { icon: '📋',  label: 'Weather Rules',   value: 'Configured',   color: '#1b4332' }
+            ? { icon: '🛡️', label: 'Total Admins', value: adminsLoading ? '...' : admins.length, color: '#1b4332' }
+            : { icon: '📋',  label: 'Weather Rules', value: 'Configured', color: '#1b4332' }
     ]
 
     return (

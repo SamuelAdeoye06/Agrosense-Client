@@ -64,7 +64,7 @@ const FarmerForecast = () => {
             {/* ── Forecast cards ── */}
             <div className="row g-3">
                 {forecast.map((day) => (
-                    <div className="col-6 col-md-4 col-xl-3" key={day.date}>
+                    <div className="col-12 col-md-4" key={day.date}>
                         <div className={`forecast-card-detailed ${day.isGoodDay ? 'forecast-card-good' : 'forecast-card-poor'}`}>
 
                             {/* day name + badge */}
@@ -78,6 +78,15 @@ const FarmerForecast = () => {
                             {/* icon + temp */}
                             <div className="forecast-icon-large">{day.icon}</div>
                             <div className="forecast-temp-value">{day.temp}°C</div>
+                            <div className="forecast-temp-range">
+                                ↓ {day.tempMin}°C &nbsp;·&nbsp; ↑ {day.tempMax}°C
+                            </div>
+
+                            {day.description && (
+                                <div className='forecast-description'>
+                                    {day.description}
+                                </div>
+                            )}
 
                             {/* condition label from decision engine */}
                             <div className="forecast-condition-label mb-2">

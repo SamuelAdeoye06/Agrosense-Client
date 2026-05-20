@@ -22,13 +22,13 @@
 
 .forecast-card-detailed {
   background: white;
-  border-radius: 20px;
-  padding: 1.2rem;
+  border-radius: 16px;
+  padding: 1rem;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.3rem;
   border: 2px solid transparent;
 }
 
@@ -47,15 +47,15 @@
 }
 
 .forecast-icon-large {
-  font-size: 2.5rem;
+  font-size: 2rem;
   text-align: center;
-  margin: 0.3rem 0;
+  margin: 0.2rem 0;
 }
 
 .forecast-temp-value {
   color: var(--as-dark-green);
   font-weight: 700;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   text-align: center;
   font-family: 'Georgia', serif;
 }
@@ -63,8 +63,8 @@
 .forecast-stats-list {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  margin-top: 0.3rem;
+  gap: 0.25rem;
+  margin-top: 0.2rem;
 }
 
 .forecast-stat-item {
@@ -83,6 +83,27 @@
   font-size: 0.78rem;
 }
 
+.forecast-condition-label {
+  font-size: 0.78rem;
+  text-align: center;
+  color: var(--as-soft-green);
+}
+
+.forecast-recommendation {
+  font-size: 0.75rem;
+  color: var(--as-text-soft, #6b7280);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.forecast-tip-item {
+  font-size: 0.72rem;
+  color: var(--as-text-soft, #6b7280);
+  line-height: 1.4;
+  display: flex;
+  gap: 4px;
+}
+
 .save-date-btn {
   font-weight: 700 !important;
   font-size: 0.82rem !important;
@@ -99,4 +120,16 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
+}
+.forecast-temp-range{
+  font-size: 0.75rem;
+  color: var(--as-text-soft, #6b7280);
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+.forecast-description{
+  font-size: 0.72rem;
+  color: var(--as-text-soft, #6b7280);
+  text-transform: capitalize;
+  margin-bottom: 6px;
 }
