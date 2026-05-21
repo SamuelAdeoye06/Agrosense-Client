@@ -118,11 +118,21 @@ const FarmerOverview = () => {
             {/* ── Today's condition banner ── */}
             <div className="mb-4 p-4 d-flex flex-wrap align-items-center justify-content-between gap-3 weather-banner">
                 <div>
-                    <p className="as-text-soft m-0 mb-1 stat-label-small text-white opacity-75">
-                        Today's Current Condition
-                    </p>
+                    <div className="d-flex align-items-center gap-2 mb-1">
+                        <p className="as-text-soft m-0 stat-label-small text-white opacity-75">
+                            Today's Current Condition
+                        </p>
+                        {todayWeather.rainTiming && todayWeather.rainTiming !== 'none' && (
+                            <span className="overview-timing-badge">
+                                {todayWeather.rainTiming === 'night'     ? '🌙 Night Rain'
+                                : todayWeather.rainTiming === 'morning'  ? '🌤 Morning Rain'
+                                : todayWeather.rainTiming === 'afternoon'? '☀️ Afternoon Rain'
+                                :                                          '🌧 Intermittent Rain'}
+                            </span>
+                        )}
+                    </div>
                     <h3 className="as-section-title text-white mb-1 weather-banner-title">
-                        {todayWeather.icon} {todayWeather.isGoodDay ? 'Good Farming Day' : 'Poor Farming Day'}
+                        {todayWeather.icon} {todayWeather.label || (todayWeather.isGoodDay ? 'Suitable' : 'Unsafe')} Conditions
                     </h3>
                     <p className="as-text-soft m-0 weather-banner-desc">
                         {todayWeather.recommendation}
@@ -138,7 +148,7 @@ const FarmerOverview = () => {
                 </div>
             </div>
 
-            {/* ── Alert banner (only shows when there's an active alert) ── */}
+            {/* ── Alert banner ── */}
             {activeAlert && (
                 <div className="mb-4 p-3 rounded-3 d-flex align-items-start gap-3 alert-banner">
                     <span className="alert-banner-icon">
@@ -147,8 +157,11 @@ const FarmerOverview = () => {
                             : '🌡'}
                     </span>
                     <div>
-                        <p className="fw-bold m-0 alert-banner-title">
+                        <p className="fw-bold m-0 alert-banner-title d-flex align-items-center gap-2">
                             {activeAlert.severity === 'high' ? 'Severe Weather Alert' : 'Weather Warning'}
+                            {activeAlert.timing === 'night' && (
+                                <span className="overnight-badge">🌙 Overnight Alert</span>
+                            )}
                         </p>
                         <p className="m-0 alert-banner-message">{activeAlert.message}</p>
                     </div>
@@ -164,7 +177,7 @@ const FarmerOverview = () => {
                             <button
                                 onClick={() => navigate('../forecast')}
                                 className="as-btn as-btn-outline border-0 p-0 stat-label-small"
-                            >
+                             >
                                 View all <i className="bi bi-arrow-right"></i>
                             </button>
                         </div>
@@ -176,36 +189,58 @@ const FarmerOverview = () => {
                         ) : (
                             <div className="as-table-container">
                                 {forecastPreview.map((day) => (
-                                    <div
-                                        key={day.date}
-                                        className="d-flex align-items-center justify-content-between py-2 border-bottom forecast-item"
-                                    >
-                                        <div className="d-flex align-items-center gap-2 forecast-day-name">
+                                    <div key={day.date} className="d-flex align-items-center justify-content-between py-2 border-bottom forecast-item gap-2">
+                                        
+                                        <div className="d-flex align-items-center gap-2 forecast-day-col">
                                             <span className="forecast-icon">{day.icon}</span>
-                                            <span className="as-text-accent fw-bold stat-label-small">
-                                                {day.dayShort}
-                                            </span>
+                                            <span className="as-text-accent fw-bold stat-label-small">{day.dayShort}</span>
                                         </div>
-                                        <span className="as-text-primary fw-bold forecast-temp">
+
+                                        <span className="as-text-primary fw-bold forecast-temp forecast-temp-col">
                                             {day.temp}°C
                                         </span>
-                                        <span className="as-text-soft forecast-rain">
-                                            {day.rain}% rain
+
+                                        <div className="d-flex flex-column forecast-rain-col">
+                                            <span className="as-text-soft forecast-rain m-0">{day.rain}% rain</span>
+                                            {day.rainTiming && day.rainTiming !== 'none' && (
+                                                <span className="as-text-soft forecast-rain-timing m-0">
+                                                    {day.rainTiming === 'night'     ? '🌙 Night'
+                                                    : day.rainTiming === 'morning'  ? '🌤 Morn'
+                                                    : day.rainTiming === 'afternoon'? '☀️ Aft'
+                                                    :                                 '🌧 Timing'}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="activity-matrix">
+                                            {day.recommendedActivities?.slice(0, 3).map((act) => (
+                                                <span key={act.key} title={act.label} className="activity-matrix-icon">{act.icon}</span>
+                                            ))}
+                                            {day.recommendedActivities?.length > 3 && (
+                                                <span className="as-text-soft activity-matrix-more">
+                                                    +{day.recommendedActivities.length - 3}
+                                                </span>
+                                            )}
+                                            {(!day.recommendedActivities || day.recommendedActivities.length === 0) && (
+                                                <span className="as-text-soft activity-matrix-empty">—</span>
+                                            )}
+                                        </div>
+
+                                        <span className={`suitability-badge ${
+                                            day.label === 'Optimal'    ? 'suitability-badge-optimal'
+                                            : day.label === 'Suitable'   ? 'suitability-badge-suitable'
+                                            : day.label === 'Restricted' ? 'suitability-badge-restricted'
+                                            :                              'suitability-badge-unsafe'
+                                        }`}>
+                                            {day.label || (day.isGoodDay ? 'Suitable' : 'Unsafe')}
                                         </span>
-                                        <span className={`as-badge ${day.isGoodDay ? 'as-badge-active' : 'as-badge-inactive'}`}>
-                                            {day.isGoodDay ? '✓ Good' : '✗ Poor'}
-                                        </span>
+
                                         <button
-                                            onClick={() => {
-                                                if (!isAlreadySaved(day.date)) setModalDay(day)
-                                            }}
+                                            onClick={() => { if (!isAlreadySaved(day.date)) setModalDay(day) }}
                                             disabled={isAlreadySaved(day.date)}
                                             className={`as-btn ${isAlreadySaved(day.date) ? 'as-btn-outline border-0' : 'as-btn-primary'} py-1 px-3 forecast-temp`}
                                         >
-                                            {isAlreadySaved(day.date)
-                                                ? <><i className="bi bi-check"></i> Saved</>
-                                                : 'Save'
-                                            }
+                                            {isAlreadySaved(day.date) ? <><i className="bi bi-check"></i> Saved</> : 'Save'}
                                         </button>
                                     </div>
                                 ))}
@@ -245,24 +280,19 @@ const FarmerOverview = () => {
                             savedDates.slice(0, 3).map((d) => (
                                 <div key={d._id} className="d-flex align-items-start justify-content-between py-2 border-bottom gap-2 forecast-item">
                                     <div className="overflow-hidden">
-                                        <div className="as-text-primary fw-bold" style={{ fontSize: '0.82rem' }}>
+                                        <div className="as-text-primary fw-bold saved-preview-title">
                                             {d.weatherSnapshot?.icon || '📅'} {d.dayLabel} — {d.date}
                                         </div>
                                         {d.cropName && (
-                                            <div className="as-text-soft" style={{ fontSize: '0.75rem' }}>
-                                                🌱 {d.cropName}
-                                            </div>
+                                            <div className="as-text-soft saved-preview-sub">🌱 {d.cropName}</div>
                                         )}
                                         {d.note && (
-                                            <div className="as-text-soft text-truncate" style={{ fontSize: '0.75rem', maxWidth: '180px' }}>
-                                                📝 {d.note}
-                                            </div>
+                                            <div className="as-text-soft text-truncate saved-preview-note">📝 {d.note}</div>
                                         )}
                                     </div>
                                     <button
                                         onClick={() => deleteDate(d._id)}
-                                        className="as-btn as-btn-danger border-0 p-1 flex-shrink-0"
-                                        style={{ fontSize: '0.75rem' }}
+                                        className="as-btn as-btn-danger border-0 p-1 flex-shrink-0 saved-preview-delete"
                                     >
                                         <i className="bi bi-trash3"></i>
                                     </button>

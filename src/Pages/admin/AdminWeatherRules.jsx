@@ -9,6 +9,7 @@ const ACTIVITY_FIELDS = {
         color: "#52b788",
         fields: [
             { key: "minRain",     label: "Min Rain Chance",   unit: "%",    min: 0,  max: 100, desc: "Minimum rain probability for good planting" },
+            { key: "maxRain",     label: "Max Rain Chance",   unit: "%",    min: 0,  max: 100, desc: "Rain above this causes seed washout and waterlogging" },
             { key: "minHumidity", label: "Min Humidity",      unit: "%",    min: 0,  max: 100, desc: "Minimum humidity level required" },
             { key: "maxWind",     label: "Max Wind Speed",    unit: " km/h",min: 0,  max: 60,  desc: "Wind above this is too strong for planting" },
             { key: "minTemp",     label: "Min Temperature",   unit: "°C",   min: 0,  max: 50,  desc: "Too cold below this temperature" },
@@ -44,14 +45,69 @@ const ACTIVITY_FIELDS = {
             { key: "maxRain", label: "Max Rain Chance", unit: "%",    min: 0, max: 100, desc: "No need to irrigate if rain is likely" },
             { key: "minTemp", label: "Min Temperature", unit: "°C",   min: 0, max: 50,  desc: "Irrigation is most needed in high heat" },
         ]
+    },
+    weeding: {
+        label: "🌿 Weeding",
+        desc:  "Conditions for manual or mechanical weeding",
+        color: "#83c5be",
+        fields: [
+            { key: "minRain",     label: "Min Rain Chance",   unit: "%",    min: 0,  max: 100, desc: "Usually best with 0% rain" },
+            { key: "maxRain",     label: "Max Rain Chance",   unit: "%",    min: 0,  max: 100, desc: "Rain above this muds soil and causes weed re-rooting" },
+            { key: "minHumidity", label: "Min Humidity",      unit: "%",    min: 0,  max: 100, desc: "Minimum humidity for field labor comfort" },
+            { key: "maxWind",     label: "Max Wind Speed",    unit: " km/h",min: 0,  max: 60,  desc: "Strong winds make field labor difficult" },
+            { key: "minTemp",     label: "Min Temperature",   unit: "°C",   min: 0,  max: 50,  desc: "Too cold to weed comfortably" },
+            { key: "maxTemp",     label: "Max Temperature",   unit: "°C",   min: 0,  max: 50,  desc: "Too hot for manual field labor" },
+        ]
+    },
+    tillage: {
+        label: "🚜 Land Prep / Tillage",
+        desc:  "Conditions for aerating soil and preparing beds/ridges",
+        color: "#c18c5d",
+        fields: [
+            { key: "minRain",     label: "Min Rain Chance",   unit: "%",    min: 0,  max: 100, desc: "Soil needs slight moisture to loosen" },
+            { key: "maxRain",     label: "Max Rain Chance",   unit: "%",    min: 0,  max: 100, desc: "Excessive rain creates heavy mud that ruins structure" },
+            { key: "minHumidity", label: "Min Humidity",      unit: "%",    min: 0,  max: 100, desc: "Minimum humidity for tilling conditions" },
+            { key: "maxWind",     label: "Max Wind Speed",    unit: " km/h",min: 0,  max: 60,  desc: "Strong winds cause soil erosion during tillage" },
+            { key: "minTemp",     label: "Min Temperature",   unit: "°C",   min: 0,  max: 50,  desc: "Too cold for soil manipulation" },
+            { key: "maxTemp",     label: "Max Temperature",   unit: "°C",   min: 0,  max: 50,  desc: "Too hot for strenuous manual tillage" },
+        ]
+    },
+    fertilizing: {
+        label: "🪱 Fertilizing",
+        desc:  "Granular or compost fertilizer application conditions",
+        color: "#b5e2fa",
+        fields: [
+            { key: "minRain",     label: "Min Rain Chance",   unit: "%",    min: 0,  max: 100, desc: "Needs very light moisture to dissolve granules" },
+            { key: "maxRain",     label: "Max Rain Chance",   unit: "%",    min: 0,  max: 100, desc: "Rain above this washes fertilizer away into gutters" },
+            { key: "minHumidity", label: "Min Humidity",      unit: "%",    min: 0,  max: 100, desc: "Ideal humidity level for application" },
+            { key: "maxWind",     label: "Max Wind Speed",    unit: " km/h",min: 0,  max: 60,  desc: "High wind blows dry granules off target" },
+            { key: "minTemp",     label: "Min Temperature",   unit: "°C",   min: 0,  max: 50,  desc: "Minimum temperature for absorption" },
+            { key: "maxTemp",     label: "Max Temperature",   unit: "°C",   min: 0,  max: 50,  desc: "High temp increases burn risk under solar glare" },
+        ]
+    },
+    pruning: {
+        label: "✂️ Pruning / Thinning",
+        desc:  "Trimming leaves and cutting branches or weeding excess shoots",
+        color: "#ffc2d1",
+        fields: [
+            { key: "minRain",     label: "Min Rain Chance",   unit: "%",    min: 0,  max: 100, desc: "Always best with 0% rain to heal cuts" },
+            { key: "maxRain",     label: "Max Rain Chance",   unit: "%",    min: 0,  max: 100, desc: "Rain keeps cuts wet, causing severe fungal infections" },
+            { key: "maxWind",     label: "Max Wind Speed",    unit: " km/h",min: 0,  max: 60,  desc: "Strong winds whip freshly cut branches" },
+            { key: "minTemp",     label: "Min Temperature",   unit: "°C",   min: 0,  max: 50,  desc: "Cold temperatures delay healing of pruning cuts" },
+            { key: "maxTemp",     label: "Max Temperature",   unit: "°C",   min: 0,  max: 50,  desc: "High temperatures cause excessive transpiration stress" },
+        ]
     }
 }
 
 const DEFAULT_RULES = {
-    planting:   { minRain: 40, minHumidity: 50, maxWind: 25, minTemp: 18, maxTemp: 35 },
+    planting:   { minRain: 40, maxRain: 50, minHumidity: 50, maxWind: 25, minTemp: 18, maxTemp: 35 },
     harvesting: { maxRain: 20, maxWind: 20, minTemp: 18, maxTemp: 38 },
     spraying:   { maxRain: 10, maxWind: 20, maxTemp: 35 },
     irrigation: { maxRain: 30, minTemp: 28 },
+    weeding:    { minRain: 0,  maxRain: 30, minHumidity: 30, maxWind: 35, minTemp: 15, maxTemp: 35 },
+    tillage:    { minRain: 10, maxRain: 40, minHumidity: 30, maxWind: 40, minTemp: 15, maxTemp: 36 },
+    fertilizing:{ minRain: 5,  maxRain: 30, minHumidity: 30, maxWind: 20, minTemp: 15, maxTemp: 35 },
+    pruning:    { minRain: 0,  maxRain: 15, minHumidity: 0,  maxWind: 30, minTemp: 15, maxTemp: 36 },
     alertRainThreshold: 85,
     alertWindThreshold: 40,
     alertTempHighThreshold: 38

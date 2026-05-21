@@ -133,3 +133,108 @@
   text-transform: capitalize;
   margin-bottom: 6px;
 }
+
+/* ── Info banner ── */
+.forecast-info-banner {
+  background-color: #ebf5fc;
+  color: #1d3557;
+  border-radius: 12px;
+  border: none;
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.forecast-info-banner-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.forecast-info-banner-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.forecast-info-banner-text {
+  font-size: 0.82rem;
+  line-height: 1.4;
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* ── Card top border by suitability ── */
+.forecast-card-optimal    { border-top: 4px solid #52b788 !important; }
+.forecast-card-suitable   { border-top: 4px solid #4db6e4 !important; }
+.forecast-card-restricted { border-top: 4px solid #f4a261 !important; }
+.forecast-card-unsafe     { border-top: 4px solid #e63946 !important; }
+
+/* ── Suitability badge on forecast card ── */
+.forecast-suitability-badge {
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ── Condition label colour by suitability ── */
+.condition-label-optimal    { color: #52b788; }
+.condition-label-suitable   { color: #4db6e4; }
+.condition-label-restricted { color: #f4a261; }
+.condition-label-unsafe     { color: #e63946; }
+
+/* ── Timing mini badge inside stat row ── */
+.forecast-timing-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #f1f3f5;
+  border: 1px solid #dee2e6;
+  color: #495057;
+  font-family: monospace;
+}
+
+/* ── Activity matrix on forecast card ── */
+.forecast-activity-matrix {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 8px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  min-height: 4rem;
+}
+
+.forecast-activity-matrix-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.forecast-activity-chip {
+  font-size: 0.68rem;
+  border-radius: 4px;
+  padding: 3px 8px;
+  background: white;
+  border: 1px solid #dee2e6;
+  color: #212529;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.forecast-activity-empty {
+  font-size: 0.7rem;
+  font-style: italic;
+}
+
+/* ── Recommendation text ── */
+.forecast-recommendation-text {
+  min-height: 3.2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

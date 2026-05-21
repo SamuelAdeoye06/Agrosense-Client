@@ -16,6 +16,13 @@ const FarmerForecast = () => {
 
     const [modalDay, setModalDay] = useState(null)
 
+    const getSuitabilityColor = (label) => {
+        if (label === 'Optimal') return '#52b788'
+        if (label === 'Suitable') return '#4db6e4'
+        if (label === 'Restricted') return '#f4a261'
+        return '#e63946'
+    }
+
     // ── Loading ──
     if (weatherLoading) {
         return (
@@ -61,21 +68,43 @@ const FarmerForecast = () => {
                 <span className="forecast-location-meta ms-2">· {location}</span>
             </div>
 
+            {/* ── Info banner ── */}
+            <div className="forecast-info-banner">
+                <span className="forecast-info-banner-icon">💡</span>
+                <div className="pe-3">
+                    <h6 className="forecast-info-banner-title">Hourly Precision & Timing Profiles</h6>
+                    <p className="forecast-info-banner-text">
+                        <strong>Today & Tomorrow's</strong> forecasts are enhanced with real-time hourly analysis to pinpoint exact times of rain, wind, or high temperatures. Days 3–7 show generalised daily averages — timing profiles and suitability ratings automatically unlock once those days are within the 48-hour window.
+                    </p>
+                </div>
+                <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
             {/* ── Forecast cards ── */}
             <div className="row g-3">
                 {forecast.map((day) => (
                     <div className="col-12 col-md-4" key={day.date}>
-                        <div className={`forecast-card-detailed ${day.isGoodDay ? 'forecast-card-good' : 'forecast-card-poor'}`}>
+                        <div className={`forecast-card-detailed ${day.isGoodDay ? 'forecast-card-good' : 'forecast-card-poor'} ${
+                            day.label === 'Optimal'    ? 'forecast-card-optimal'
+                            : day.label === 'Suitable'   ? 'forecast-card-suitable'
+                            : day.label === 'Restricted' ? 'forecast-card-restricted'
+                            :                              'forecast-card-unsafe'
+                        }`}>
 
-                            {/* day name + badge */}
+                            {/* day name + suitability badge */}
                             <div className="d-flex justify-content-between align-items-center flex-wrap gap-1">
                                 <span className="forecast-day-label">{day.dayLabel}</span>
-                                <span className={`as-badge ${day.isGoodDay ? 'as-badge-active' : 'as-badge-inactive'}`}>
-                                    {day.isGoodDay ? '✓ Good' : '✗ Poor'}
+                                <span className={`forecast-suitability-badge ${
+                                    day.label === 'Optimal'    ? 'suitability-badge-optimal'
+                                    : day.label === 'Suitable'   ? 'suitability-badge-suitable'
+                                    : day.label === 'Restricted' ? 'suitability-badge-restricted'
+                                    :                              'suitability-badge-unsafe'
+                                }`}>
+                                    {day.label || (day.isGoodDay ? 'Suitable' : 'Unsafe')}
                                 </span>
                             </div>
 
-                            {/* icon + temp */}
+                            {/* icon + temp + range */}
                             <div className="forecast-icon-large">{day.icon}</div>
                             <div className="forecast-temp-value">{day.temp}°C</div>
                             <div className="forecast-temp-range">
@@ -83,43 +112,75 @@ const FarmerForecast = () => {
                             </div>
 
                             {day.description && (
-                                <div className='forecast-description'>
-                                    {day.description}
-                                </div>
+                                <div className="forecast-description">{day.description}</div>
                             )}
 
-                            {/* condition label from decision engine */}
-                            <div className="forecast-condition-label mb-2">
-                                {day.label}
+                            {/* condition label */}
+                            <div className={`forecast-condition-label mb-2 fw-bold ${
+                                day.label === 'Optimal'    ? 'condition-label-optimal'
+                                : day.label === 'Suitable'   ? 'condition-label-suitable'
+                                : day.label === 'Restricted' ? 'condition-label-restricted'
+                                :                              'condition-label-unsafe'
+                            }`}>
+                                {day.label || (day.isGoodDay ? 'Suitable Day' : 'Unsafe Day')}
                             </div>
 
                             {/* weather stats */}
                             <div className="forecast-stats-list">
                                 {[
-                                    { icon: 'bi-cloud-rain', label: 'Rain',     value: `${day.rain}%`,           color: '#4db6e4' },
-                                    { icon: 'bi-droplet',    label: 'Humidity', value: `${day.humidity}%`,        color: 'var(--as-primary-green)' },
-                                    { icon: 'bi-wind',       label: 'Wind',     value: `${day.windSpeed} km/h`,   color: '#a78bfa' },
+                                    { icon: 'bi-cloud-rain', label: 'Rain',     value: `${day.rain}%`,         color: 'var(--as-primary-green)', timing: day.rainTiming },
+                                    { icon: 'bi-droplet',    label: 'Humidity', value: `${day.humidity}%`,      color: '#4db6e4',                 timing: null },
+                                    { icon: 'bi-wind',       label: 'Wind',     value: `${day.windSpeed} km/h`, color: '#a78bfa',                 timing: day.windTiming },
                                 ].map((s) => (
-                                    <div key={s.label} className="forecast-stat-item">
+                                    <div key={s.label} className="forecast-stat-item py-1">
                                         <span className="forecast-stat-label">
                                             <i className={`bi ${s.icon} me-1`}></i>{s.label}
                                         </span>
-                                        <span className="forecast-stat-value" style={{ color: s.color }}>
-                                            {s.value}
-                                        </span>
+                                        <div className="d-flex align-items-center gap-2">
+                                            {s.timing && s.timing !== 'none' && (
+                                                <span className="forecast-timing-badge">
+                                                    {s.timing === 'night'     ? '🌙 Night'
+                                                    : s.timing === 'morning'  ? '🌤 Morn'
+                                                    : s.timing === 'afternoon'? '☀️ Aft'
+                                                    : s.timing}
+                                                </span>
+                                            )}
+                                            <span className="forecast-stat-value" style={{ color: s.color }}>
+                                                {s.value}
+                                            </span>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
 
-                            {/* recommendation from decision engine */}
+                            {/* recommendation */}
                             {day.recommendation && (
-                                <p className="forecast-recommendation mt-2 mb-2">
+                                <p className="forecast-recommendation forecast-recommendation-text mt-2 mb-2">
                                     {day.recommendation}
                                 </p>
                             )}
 
-                            {/* crop category tips */}
-                            {day.categoryTips && day.categoryTips.length > 0 && (
+                            {/* activity matrix */}
+                            <div className="forecast-activity-matrix">
+                                <div className="as-text-soft forecast-activity-matrix-label">Recommended Activities</div>
+                                <div className="d-flex flex-wrap gap-1">
+                                    {day.recommendedActivities?.length > 0 ? (
+                                        day.recommendedActivities.map((act) => (
+                                            <span key={act.key} className="forecast-activity-chip" title={act.label}>
+                                                <span>{act.icon}</span>
+                                                <span>{act.label}</span>
+                                            </span>
+                                        ))
+                                    ) : (
+                                        <span className="as-text-soft forecast-activity-empty">
+                                            No activities recommended for today's weather.
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* crop tips */}
+                            {day.categoryTips?.length > 0 && (
                                 <div className="forecast-tips mt-1 mb-2">
                                     {day.categoryTips.slice(0, 2).map((tip, i) => (
                                         <div key={i} className="forecast-tip-item">

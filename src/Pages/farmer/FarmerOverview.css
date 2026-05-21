@@ -126,3 +126,94 @@
     gap: 0.5rem;
   }
 }
+
+/* ── Timing badge in banner ── */
+.overview-timing-badge {
+  font-size: 0.7rem;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-weight: 700;
+  background: white;
+  color: #1b4332;
+}
+
+/* ── Rain timing sub-label in forecast row ── */
+.forecast-rain-timing {
+  font-size: 0.68rem;
+  opacity: 0.8;
+  font-weight: 600;
+}
+
+/* ── Activity mini-matrix ── */
+.activity-matrix {
+  min-width: 75px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.activity-matrix-icon {
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+
+.activity-matrix-more {
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.activity-matrix-empty {
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* ── Suitability badge in forecast row ── */
+.suitability-badge {
+  min-width: 75px;
+  text-align: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.suitability-badge-optimal    { background-color: #52b788; }
+.suitability-badge-suitable   { background-color: #4db6e4; }
+.suitability-badge-restricted { background-color: #f4a261; }
+.suitability-badge-unsafe     { background-color: #e63946; }
+
+/* ── Overnight badge in alert banner ── */
+.overnight-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.3);
+  color: white;
+}
+
+/* ── Saved date preview rows ── */
+.saved-preview-title {
+  font-size: 0.82rem;
+}
+
+.saved-preview-sub {
+  font-size: 0.75rem;
+}
+
+.saved-preview-note {
+  font-size: 0.75rem;
+  max-width: 180px;
+}
+
+.saved-preview-delete {
+  font-size: 0.75rem;
+}
+
+/* ── Forecast row min widths ── */
+.forecast-day-col  { min-width: 70px; }
+.forecast-temp-col { min-width: 45px; }
+.forecast-rain-col { min-width: 85px; }
