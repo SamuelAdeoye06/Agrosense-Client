@@ -3,6 +3,7 @@ import { useAuth } from './context/AuthContext'
 
 import Landing        from './Pages/Landing'
 import Login          from './Pages/Login'
+import ForgotPassword from './Pages/ForgotPassword'
 import Register       from './Pages/Register'
 import NotFound       from './Pages/NotFound'
 import AdminLogin     from './Pages/AdminLogin'
@@ -36,6 +37,9 @@ function App() {
         user
           ? <Navigate to={user.role === 'farmer' ? '/dashboard/overview' : '/admin/overview'} replace />
           : <Login />
+      } />
+      <Route path="/forgot-password" element={
+          user ? <Navigate to={user.role === 'farmer' ? '/dashboard/overview' : '/admin/overview'} replace /> : <ForgotPassword />
       } />
       <Route path="/register" element={
         user

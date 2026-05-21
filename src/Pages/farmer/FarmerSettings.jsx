@@ -6,7 +6,7 @@ import api from '../../api/axios'
 import './FarmerSettings.css'
 import LocationSelector from '../../components/LocationSelector'
 import { STATES, getCities } from '../../data/nigeriaLocations'
-
+import { useNavigate } from 'react-router-dom'
 
 // ── Crop categories list ──
 const CROP_CATEGORIES = [
@@ -89,7 +89,8 @@ const CropProfileSelector = ({ selected, onChange }) => {
 // ── Main FarmerSettings component ──
 const FarmerSettings = () => {
     const { farmerName, setFarmerName, location, setLocation, cropProfiles, setCropProfiles, loadWeather } = useFarmer()  
-    const { user, logout, deleteAccount, updateUser } = useAuth()
+    const { user, logout, updateUser } = useAuth()
+    const navigate = useNavigate()
 
     const [showAvatarModal, setShowAvatarModal] = useState(false)
     const [editingName, setEditingName]         = useState(false)
@@ -109,6 +110,13 @@ const FarmerSettings = () => {
     const [passwordLoading, setPasswordLoading]   = useState(false)
     const [passwordError, setPasswordError]       = useState(null)
     const [passwordSuccess, setPasswordSuccess]   = useState(false)
+
+
+    const [deleteStep, setDeleteStep]     = useState('confirm') // 'confirm' | 'otp'
+    const [deleteOtp, setDeleteOtp]       = useState('')
+    const [deleteError, setDeleteError]   = useState(null)
+    const [deleteLoading, setDeleteLoading] = useState(false)
+
 
     const handlePasswordChange = (e) => {
         setPasswordData({ ...passwordData, [e.target.name]: e.target.value })
@@ -180,9 +188,36 @@ const FarmerSettings = () => {
         }
     }
 
-    const handleDeleteAccount = async () => {
-        try { await deleteAccount() }
-        catch (err) { console.error("Failed to delete account:", err) }
+    // const handleDeleteAccount = async () => {
+    //     try { await deleteAccount() }
+    //     catch (err) { console.error("Failed to delete account:", err) }
+    // }
+
+    const handleRequestDeleteOTP = async () => {
+        setDeleteError(null)
+        setDeleteLoading(true)
+        try {
+            await api.post('/auth/send-otp')
+            setDeleteStep('otp')
+        } catch (err) {
+            setDeleteError(err.response?.data?.message || 'Failed to send OTP. Try again.')
+        } finally {
+            setDeleteLoading(false)
+        }
+    }
+
+    const handleVerifyDeleteOTP = async () => {
+        if (deleteOtp.length !== 6) return setDeleteError('Please enter the full 6-digit OTP')
+        setDeleteError(null)
+        setDeleteLoading(true)
+        try {
+            await api.post('/auth/verify-otp', { otp: deleteOtp })
+            logout()  // ✅ clears session and redirects to /login
+        } catch (err) {
+            setDeleteError(err.response?.data?.message || 'Invalid OTP. Please try again.')
+        } finally {
+            setDeleteLoading(false)
+        }
     }
 
     return (
@@ -410,17 +445,109 @@ const FarmerSettings = () => {
 
             {/* Delete modal */}
             {showDeleteModal && (
-                <div className="farmer-delete-modal-overlay" onClick={() => setShowDeleteModal(false)}>
+                <div className="farmer-delete-modal-overlay" onClick={() => {
+                    setShowDeleteModal(false)
+                    setDeleteStep('confirm')
+                    setDeleteOtp('')
+                    setDeleteError(null)
+                }}>
                     <div className="as-card farmer-delete-modal-card" onClick={(e) => e.stopPropagation()}>
-                        <div className="text-center mb-4">
-                            <div className="delete-alert-icon-wrapper">🗑️</div>
-                            <h5 className="as-text-primary fw-bold mb-2">Delete Your Account?</h5>
-                            <p className="as-text-soft m-0 delete-modal-text-desc">This cannot be undone. All your data will be permanently lost.</p>
-                        </div>
-                        <div className="d-flex gap-3">
-                            <button onClick={() => setShowDeleteModal(false)} className="as-btn as-btn-outline flex-grow-1 py-2">Cancel</button>
-                            <button onClick={handleDeleteAccount} className="as-btn flex-grow-1 py-2 confirm-delete-account-btn">Delete</button>
-                        </div>
+
+                        {deleteStep === 'confirm' && (
+                            <>
+                                <div className="text-center mb-4">
+                                    <div className="delete-alert-icon-wrapper">🗑️</div>
+                                    <h5 className="as-text-primary fw-bold mb-2">Delete Your Account?</h5>
+                                    <p className="as-text-soft m-0 delete-modal-text-desc">
+                                        This cannot be undone. All your data including saved dates and crop profiles will be permanently lost,an OTP will be sent to your mail to confirm delete
+                                    </p>
+                                </div>
+                                {deleteError && (
+                                    <div className="as-badge-inactive p-2 rounded mb-3 text-center" style={{ fontSize: '0.8rem' }}>
+                                        <i className="bi bi-exclamation-circle me-1"></i>{deleteError}
+                                    </div>
+                                )}
+                                <div className="d-flex gap-3">
+                                    <button
+                                        onClick={() => { setShowDeleteModal(false); setDeleteError(null) }}
+                                        className="as-btn as-btn-outline flex-grow-1 py-2"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleRequestDeleteOTP}
+                                        disabled={deleteLoading}
+                                        className="as-btn flex-grow-1 py-2 confirm-delete-account-btn"
+                                    >
+                                        {deleteLoading
+                                            ? <><span className="spinner-border spinner-border-sm me-1" /> Sending OTP..</>
+                                            : 'Yes, Delete'
+                                        }
+                                    </button>
+                                </div>
+                            </>
+                        )}
+
+                        {deleteStep === 'otp' && (
+                            <>
+                                <div className="text-center mb-4">
+                                    <div className="delete-alert-icon-wrapper">📧</div>
+                                    <h5 className="as-text-primary fw-bold mb-2">Confirm with OTP</h5>
+                                    <p className="as-text-soft m-0 delete-modal-text-desc">
+                                        A 6-digit code was sent to <strong>{user?.email}</strong>. Enter it below to confirm deletion.
+                                    </p>
+                                </div>
+
+                                <div className="mb-3">
+                                    <input
+                                        type="text"
+                                        inputMode="numeric"
+                                        maxLength={6}
+                                        value={deleteOtp}
+                                        onChange={(e) => { setDeleteOtp(e.target.value.replace(/\D/g, '')); setDeleteError(null) }}
+                                        placeholder="Enter 6-digit OTP"
+                                        className="as-input text-center fw-bold"
+                                        style={{ letterSpacing: '8px', fontSize: '1.2rem' }}
+                                    />
+                                </div>
+
+                                {deleteError && (
+                                    <div className="as-badge-inactive p-2 rounded mb-3 text-center" style={{ fontSize: '0.8rem' }}>
+                                        <i className="bi bi-exclamation-circle me-1"></i>{deleteError}
+                                    </div>
+                                )}
+
+                                <div className="d-flex gap-3 mb-3">
+                                    <button
+                                        onClick={() => { setDeleteStep('confirm'); setDeleteOtp(''); setDeleteError(null) }}
+                                        className="as-btn as-btn-outline flex-grow-1 py-2"
+                                    >
+                                        Back
+                                    </button>
+                                    <button
+                                        onClick={handleVerifyDeleteOTP}
+                                        disabled={deleteLoading || deleteOtp.length !== 6}
+                                        className="as-btn flex-grow-1 py-2 confirm-delete-account-btn"
+                                    >
+                                        {deleteLoading
+                                            ? <><span className="spinner-border spinner-border-sm me-1" /> Deleting...</>
+                                            : 'Confirm Delete'
+                                        }
+                                    </button>
+                                </div>
+
+                                <p className="text-center as-text-soft" style={{ fontSize: '0.78rem' }}>
+                                    Didn't receive it?{' '}
+                                    <button
+                                        onClick={handleRequestDeleteOTP}
+                                        className="btn btn-link p-0 as-text-accent fw-bold text-decoration-none"
+                                        style={{ fontSize: '0.78rem' }}
+                                    >
+                                        Resend OTP
+                                    </button>
+                                </p>
+                            </>
+                        )}
                     </div>
                 </div>
             )}

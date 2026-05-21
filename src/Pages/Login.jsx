@@ -129,7 +129,7 @@ const Login = () => {
               <div className="mb-4">
                 <div className="d-flex justify-content-between align-items-center mb-1">
                   <label className="auth-label m-0">Password</label>
-                  <a href="#" className="auth-forgot-link">Forgot password?</a>
+                  <Link to="/forgot-password" className="auth-forgot-link">Forgot password?</Link>
                 </div>
                 <div className="auth-input-wrapper">
                   <i className="bi bi-lock auth-input-icon"></i>

@@ -1,20 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useFarmer } from '../../context/DashboardContext'
 import './FarmerOverview.css'
+import SaveDateModal from '../../components/SaveDateModal'
 
 const FarmerOverview = () => {
+    const [modalDay, setModalDay] = useState(null)
+
     const {
-        location,
-        savedDates,
-        deleteDate,
-        isAlreadySaved,
-        todayWeather,
-        forecast,
-        activeAlert,
-        weatherLoading,
-        weatherError,
-        loadWeather
+         location, savedDates, deleteDate, isAlreadySaved, todayWeather, forecast, activeAlert, weatherLoading, weatherError, loadWeather, saveDate
     } = useFarmer()
 
     const navigate = useNavigate()
@@ -98,7 +92,7 @@ const FarmerOverview = () => {
             <div className="as-section-header mb-3">
                 <div className="as-header-line" />
                 <h6 className="as-text-primary fw-bold m-0 stat-label-small">
-                    Today's Weather Forecast
+                    Current Weather Forecast
                 </h6>
                 <span className="as-badge as-badge-active ms-2">{location}</span>
             </div>
@@ -125,7 +119,7 @@ const FarmerOverview = () => {
             <div className="mb-4 p-4 d-flex flex-wrap align-items-center justify-content-between gap-3 weather-banner">
                 <div>
                     <p className="as-text-soft m-0 mb-1 stat-label-small text-white opacity-75">
-                        Today's Condition
+                        Today's Current Condition
                     </p>
                     <h3 className="as-section-title text-white mb-1 weather-banner-title">
                         {todayWeather.icon} {todayWeather.isGoodDay ? 'Good Farming Day' : 'Poor Farming Day'}
@@ -168,7 +162,7 @@ const FarmerOverview = () => {
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             <h6 className="as-text-primary fw-bold m-0">7-Day Forecast</h6>
                             <button
-                                onClick={() => navigate('forecast')}
+                                onClick={() => navigate('../forecast')}
                                 className="as-btn as-btn-outline border-0 p-0 stat-label-small"
                             >
                                 View all <i className="bi bi-arrow-right"></i>
@@ -202,7 +196,9 @@ const FarmerOverview = () => {
                                             {day.isGoodDay ? '✓ Good' : '✗ Poor'}
                                         </span>
                                         <button
-                                            onClick={() => !isAlreadySaved(day.date) && navigate('forecast')}
+                                            onClick={() => {
+                                                if (!isAlreadySaved(day.date)) setModalDay(day)
+                                            }}
                                             disabled={isAlreadySaved(day.date)}
                                             className={`as-btn ${isAlreadySaved(day.date) ? 'as-btn-outline border-0' : 'as-btn-primary'} py-1 px-3 forecast-temp`}
                                         >
@@ -231,7 +227,7 @@ const FarmerOverview = () => {
                                 )}
                             </h6>
                             <button
-                                onClick={() => navigate('saved')}
+                                onClick={() => navigate('../saved')}
                                 className="as-btn as-btn-outline border-0 p-0 stat-label-small"
                             >
                                 View all <i className="bi bi-arrow-right"></i>
@@ -247,36 +243,42 @@ const FarmerOverview = () => {
                             </div>
                         ) : (
                             savedDates.slice(0, 3).map((d) => (
-                                <div key={d._id} className="as-card mb-2 p-3 saved-item-card">
-                                    <div className="d-flex justify-content-between align-items-start gap-2">
-                                        <div className="overflow-hidden">
-                                            <div className="as-text-primary fw-bold saved-item-title">
-                                                {d.weatherSnapshot?.icon || '📅'} {d.dayLabel} — {d.date}
-                                            </div>
-                                            {d.cropName && (
-                                                <div className="as-text-soft mt-1 saved-item-note">
-                                                    🌱 {d.cropName}
-                                                </div>
-                                            )}
-                                            {d.note && (
-                                                <div className="as-text-soft text-truncate mt-1 saved-item-note">
-                                                    📝 {d.note}
-                                                </div>
-                                            )}
+                                <div key={d._id} className="d-flex align-items-start justify-content-between py-2 border-bottom gap-2 forecast-item">
+                                    <div className="overflow-hidden">
+                                        <div className="as-text-primary fw-bold" style={{ fontSize: '0.82rem' }}>
+                                            {d.weatherSnapshot?.icon || '📅'} {d.dayLabel} — {d.date}
                                         </div>
-                                        <button
-                                            onClick={() => deleteDate(d._id)}
-                                            className="as-btn as-btn-danger border-0 p-1"
-                                        >
-                                            <i className="bi bi-trash3"></i>
-                                        </button>
+                                        {d.cropName && (
+                                            <div className="as-text-soft" style={{ fontSize: '0.75rem' }}>
+                                                🌱 {d.cropName}
+                                            </div>
+                                        )}
+                                        {d.note && (
+                                            <div className="as-text-soft text-truncate" style={{ fontSize: '0.75rem', maxWidth: '180px' }}>
+                                                📝 {d.note}
+                                            </div>
+                                        )}
                                     </div>
+                                    <button
+                                        onClick={() => deleteDate(d._id)}
+                                        className="as-btn as-btn-danger border-0 p-1 flex-shrink-0"
+                                        style={{ fontSize: '0.75rem' }}
+                                    >
+                                        <i className="bi bi-trash3"></i>
+                                    </button>
                                 </div>
                             ))
                         )}
                     </div>
                 </div>
             </div>
+            {modalDay && (
+                <SaveDateModal
+                    day={modalDay}
+                    onSave={saveDate}
+                    onClose={() => setModalDay(null)}
+                />
+            )}
         </>
     )
 }
