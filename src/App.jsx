@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 
 import Landing        from './Pages/Landing'
@@ -24,8 +25,34 @@ import AdminSettings      from './Pages/admin/AdminSettings'
 
 import ProtectedRoute from './components/ProtectedRoute'
 
+const pageTitles = {
+  '/': 'AgroSense',
+  '/login': 'Login | AgroSense',
+  '/forgot-password': 'Forgot Password | AgroSense',
+  '/register': 'Create Account | AgroSense',
+  '/admin/login': 'Admin Login | AgroSense',
+  '/admin/register': 'Register Admin | AgroSense',
+  '/dashboard': 'Farmer Dashboard | AgroSense',
+  '/dashboard/overview': 'Farmer Overview | AgroSense',
+  '/dashboard/forecast': 'Weather Forecast | AgroSense',
+  '/dashboard/saved': 'Saved Dates | AgroSense',
+  '/dashboard/settings': 'Farmer Settings | AgroSense',
+  '/admin': 'Admin Dashboard | AgroSense',
+  '/admin/overview': 'Admin Overview | AgroSense',
+  '/admin/farmers': 'Farmers | AgroSense',
+  '/admin/admins': 'Admins | AgroSense',
+  '/admin/weather-rules': 'Weather Rules | AgroSense',
+  '/admin/settings': 'Admin Settings | AgroSense'
+}
+
 function App() {
   const { user } = useAuth()
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    const normalizedPath = pathname.replace(/\/+$/, '') || '/'
+    document.title = pageTitles[normalizedPath] || 'Page Not Found | AgroSense'
+  }, [pathname])
 
   return (
     <Routes>
