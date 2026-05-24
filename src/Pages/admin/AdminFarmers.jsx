@@ -19,7 +19,8 @@ const AdminFarmers = () => {
   const { users, usersLoading, toggleFarmerStatus, deleteFarmer } = useAdmin()
   const [search, setSearch]               = useState('')
   const [deleteModal, setDeleteModal]     = useState({ open: false, user: null })
-  const [deleteLoading, setDeleteLoading] = useState(false) 
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [togglingId, setTogglingId]       = useState(null)
 
   const filtered = users.filter((u) =>
     u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -33,6 +34,12 @@ const AdminFarmers = () => {
     await deleteFarmer(deleteModal.user.id)
     setDeleteLoading(false)
     closeDelete()
+  }
+
+  const handleToggle = async (id) => {
+    setTogglingId(id)
+    await toggleFarmerStatus(id)
+    setTogglingId(null)
   }
 
   return (
@@ -58,6 +65,7 @@ const AdminFarmers = () => {
         <LoadingState />
       ) : (
         <>
+          {/* ── Desktop Table ── */}
           <div className="d-none d-md-block as-card p-4">
             <div className="as-table-container">
               <table className="as-table">
@@ -93,10 +101,15 @@ const AdminFarmers = () => {
                       <td>
                         <div className="d-flex gap-2">
                           <button
-                            onClick={() => toggleFarmerStatus(u.id)}
+                            onClick={() => handleToggle(u.id)}
+                            disabled={togglingId === u.id}
                             className={`as-btn as-btn-outline py-1 px-3 farmer-action-btn-status ${u.status === 'active' ? 'btn-status-deactivate' : 'btn-status-activate'}`}
                           >
-                            {u.status === 'active' ? 'Deactivate' : 'Activate'}
+                            {togglingId === u.id ? (
+                              <><span className="spinner-border spinner-border-sm me-1"></span>{u.status === 'active' ? 'Deactivating...' : 'Activating...'}</>
+                            ) : (
+                              u.status === 'active' ? 'Deactivate' : 'Activate'
+                            )}
                           </button>
                           <button onClick={() => openDelete(u)} className="as-btn as-btn-danger p-2">
                             <i className="bi bi-trash3"></i>
@@ -115,6 +128,7 @@ const AdminFarmers = () => {
             )}
           </div>
 
+          {/* ── Mobile Cards ── */}
           <div className="d-md-none">
             {filtered.length === 0 ? (
               <div className="as-card text-center py-4 as-text-soft">
@@ -143,10 +157,15 @@ const AdminFarmers = () => {
                 </div>
                 <div className="d-flex gap-2">
                   <button
-                    onClick={() => toggleFarmerStatus(u.id)}
+                    onClick={() => handleToggle(u.id)}
+                    disabled={togglingId === u.id}
                     className={`as-btn flex-grow-1 py-2 farmer-mobile-action-btn ${u.status === 'active' ? 'btn-status-deactivate' : 'btn-status-activate'}`}
                   >
-                    {u.status === 'active' ? 'Deactivate' : 'Activate'}
+                    {togglingId === u.id ? (
+                      <><span className="spinner-border spinner-border-sm me-1"></span>{u.status === 'active' ? 'Deactivating...' : 'Activating...'}</>
+                    ) : (
+                      u.status === 'active' ? 'Deactivate' : 'Activate'
+                    )}
                   </button>
                   <button onClick={() => openDelete(u)} className="as-btn as-btn-danger px-3">
                     <i className="bi bi-trash3"></i>
@@ -158,6 +177,7 @@ const AdminFarmers = () => {
         </>
       )}
 
+      {/* ── Delete Modal ── */}
       {deleteModal.open && (
         <div className="farmer-modal-overlay" onClick={closeDelete}>
           <div className="as-card farmer-delete-modal-card" onClick={(e) => e.stopPropagation()}>

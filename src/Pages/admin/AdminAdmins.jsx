@@ -21,19 +21,26 @@ const AdminAdmins = () => {
   const [search, setSearch]               = useState('')
   const [deleteModal, setDeleteModal]     = useState({ open: false, admin: null })
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [togglingId, setTogglingId]       = useState(null)
 
   const filtered = admins.filter((a) =>
     a.name.toLowerCase().includes(search.toLowerCase()) ||
     a.email.toLowerCase().includes(search.toLowerCase())
   )
 
-  const openDelete  = (admin) => { setDeleteModal({ open: true, admin }) }
-  const closeDelete = ()      => { setDeleteModal({ open: false, admin: null }) }
+  const openDelete    = (admin) => { setDeleteModal({ open: true, admin }) }
+  const closeDelete   = ()      => { setDeleteModal({ open: false, admin: null }) }
   const confirmDelete = async () => {
     setDeleteLoading(true)
     await deleteAdmin(deleteModal.admin.id)
     setDeleteLoading(false)
     closeDelete()
+  }
+
+  const handleToggle = async (id) => {
+    setTogglingId(id)
+    await toggleAdminStatus(id)
+    setTogglingId(null)
   }
 
   return (
@@ -77,6 +84,7 @@ const AdminAdmins = () => {
         </div>
       ) : (
         <>
+          {/* ── Desktop Table ── */}
           <div className="d-none d-md-block as-card p-4">
             <div className="as-table-container">
               <table className="as-table">
@@ -124,10 +132,15 @@ const AdminAdmins = () => {
                           ) : (
                             <div className="d-flex gap-2">
                               <button
-                                onClick={() => toggleAdminStatus(a.id)}
+                                onClick={() => handleToggle(a.id)}
+                                disabled={togglingId === a.id}
                                 className={`as-btn as-btn-outline py-1 px-3 admin-action-btn-status ${a.status === 'active' ? 'btn-status-deactivate' : 'btn-status-activate'}`}
                               >
-                                {a.status === 'active' ? 'Deactivate' : 'Activate'}
+                                {togglingId === a.id ? (
+                                  <><span className="spinner-border spinner-border-sm me-1"></span>{a.status === 'active' ? 'Deactivating...' : 'Activating...'}</>
+                                ) : (
+                                  a.status === 'active' ? 'Deactivate' : 'Activate'
+                                )}
                               </button>
                               <button onClick={() => openDelete(a)} className="as-btn as-btn-danger p-2">
                                 <i className="bi bi-trash3"></i>
@@ -141,9 +154,12 @@ const AdminAdmins = () => {
                 </tbody>
               </table>
             </div>
-            {filtered.length === 0 && <div className="text-center py-4 as-text-soft">No admins found</div>}
+            {filtered.length === 0 && (
+              <div className="text-center py-4 as-text-soft">No admins found</div>
+            )}
           </div>
 
+          {/* ── Mobile Cards ── */}
           <div className="d-md-none">
             {filtered.map((a) => {
               const isSelf = a.role === 'super_admin'
@@ -175,10 +191,15 @@ const AdminAdmins = () => {
                   {!isSelf && (
                     <div className="d-flex gap-2">
                       <button
-                        onClick={() => toggleAdminStatus(a.id)}
+                        onClick={() => handleToggle(a.id)}
+                        disabled={togglingId === a.id}
                         className={`as-btn flex-grow-1 py-2 admin-action-btn-status ${a.status === 'active' ? 'btn-status-deactivate' : 'btn-status-activate'}`}
                       >
-                        {a.status === 'active' ? 'Deactivate' : 'Activate'}
+                        {togglingId === a.id ? (
+                          <><span className="spinner-border spinner-border-sm me-1"></span>{a.status === 'active' ? 'Deactivating...' : 'Activating...'}</>
+                        ) : (
+                          a.status === 'active' ? 'Deactivate' : 'Activate'
+                        )}
                       </button>
                       <button onClick={() => openDelete(a)} className="as-btn as-btn-danger px-3">
                         <i className="bi bi-trash3"></i>
@@ -192,6 +213,7 @@ const AdminAdmins = () => {
         </>
       )}
 
+      {/* ── Delete Modal ── */}
       {deleteModal.open && (
         <div className="admin-modal-overlay" onClick={closeDelete}>
           <div className="as-card admin-delete-modal-card" onClick={(e) => e.stopPropagation()}>
