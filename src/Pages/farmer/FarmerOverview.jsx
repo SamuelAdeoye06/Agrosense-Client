@@ -177,71 +177,100 @@ const FarmerOverview = () => {
                             <button
                                 onClick={() => navigate('../forecast')}
                                 className="as-btn as-btn-outline border-0 p-0 stat-label-small"
-                             >
+                            >
                                 View all <i className="bi bi-arrow-right"></i>
                             </button>
                         </div>
 
                         {forecastPreview.length === 0 ? (
-                            <p className="as-text-soft text-center py-3 m-0">
-                                No forecast data available.
-                            </p>
+                            <p className="as-text-soft text-center py-3 m-0">No forecast data available.</p>
                         ) : (
-                            <div className="as-table-container">
+                            <div className="fp-table">
+
+                                {/* ── Header row ── */}
+                                <div className="fp-table-header">
+                                    <div className="fp-col-day">Day</div>
+                                    <div className="fp-col-temp">Temp</div>
+                                    <div className="fp-col-rain">Rain</div>
+                                    <div className="fp-col-activities">Activities</div>
+                                    <div className="fp-col-status">Status</div>
+                                    <div className="fp-col-action"></div>
+                                </div>
+
+                                {/* ── Data rows ── */}
                                 {forecastPreview.map((day) => (
-                                    <div key={day.date} className="d-flex align-items-center justify-content-between py-2 border-bottom forecast-item gap-2">
-                                        
-                                        <div className="d-flex align-items-center gap-2 forecast-day-col">
-                                            <span className="forecast-icon">{day.icon}</span>
-                                            <span className="as-text-accent fw-bold stat-label-small">{day.dayShort}</span>
+                                    <div
+                                        key={day.date}
+                                        className={`fp-table-row fp-row-${(day.label || 'unsafe').toLowerCase()}`}
+                                    >
+                                        {/* Day */}
+                                        <div className="fp-col-day">
+                                            <span className="fp-weather-icon">{day.icon}</span>
+                                            <div>
+                                                <div className="fp-day-name">{day.dayShort}</div>
+                                                <div className="fp-day-date">{day.date?.slice(5)}</div>
+                                            </div>
                                         </div>
 
-                                        <span className="as-text-primary fw-bold forecast-temp forecast-temp-col">
-                                            {day.temp}°C
-                                        </span>
+                                        {/* Temp */}
+                                        <div className="fp-col-temp">
+                                            <span className="fp-temp-value">{day.temp}°C</span>
+                                            <span className="fp-temp-range">{day.tempMin}°–{day.tempMax}°</span>
+                                        </div>
 
-                                        <div className="d-flex flex-column forecast-rain-col">
-                                            <span className="as-text-soft forecast-rain m-0">{day.rain}% rain</span>
+                                        {/* Rain */}
+                                        <div className="fp-col-rain">
+                                            <span className="fp-rain-value">{day.rain}%</span>
                                             {day.rainTiming && day.rainTiming !== 'none' && (
-                                                <span className="as-text-soft forecast-rain-timing m-0">
-                                                    {day.rainTiming === 'night'     ? '🌙 Night'
-                                                    : day.rainTiming === 'morning'  ? '🌤 Morn'
-                                                    : day.rainTiming === 'afternoon'? '☀️ Aft'
-                                                    :                                 '🌧 Timing'}
+                                                <span className="fp-timing-tag">
+                                                    {day.rainTiming === 'night'      ? '🌙 Night'
+                                                    : day.rainTiming === 'morning'   ? '🌤 Morn'
+                                                    : day.rainTiming === 'afternoon' ? '☀️ Aft'
+                                                    :                                  '🌧 Mix'}
                                                 </span>
                                             )}
                                         </div>
 
-                                        <div className="activity-matrix">
-                                            {day.recommendedActivities?.slice(0, 3).map((act) => (
-                                                <span key={act.key} title={act.label} className="activity-matrix-icon">{act.icon}</span>
-                                            ))}
-                                            {day.recommendedActivities?.length > 3 && (
-                                                <span className="as-text-soft activity-matrix-more">
-                                                    +{day.recommendedActivities.length - 3}
-                                                </span>
-                                            )}
-                                            {(!day.recommendedActivities || day.recommendedActivities.length === 0) && (
-                                                <span className="as-text-soft activity-matrix-empty">—</span>
+                                        {/* Activities */}
+                                        <div className="fp-col-activities">
+                                            {day.recommendedActivities?.length > 0 ? (
+                                                <div className="fp-activity-pills">
+                                                    {day.recommendedActivities.slice(0, 2).map((act) => (
+                                                        <span key={act.key} className="fp-activity-pill" title={act.label}>
+                                                            {act.icon} {act.label}
+                                                        </span>
+                                                    ))}
+                                                    {day.recommendedActivities.length > 2 && (
+                                                        <span className="fp-activity-pill fp-pill-more">
+                                                            +{day.recommendedActivities.length - 2}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <span className="fp-no-activity">—</span>
                                             )}
                                         </div>
 
-                                        <span className={`suitability-badge ${
-                                            day.label === 'Optimal'    ? 'suitability-badge-optimal'
-                                            : day.label === 'Suitable'   ? 'suitability-badge-suitable'
-                                            : day.label === 'Restricted' ? 'suitability-badge-restricted'
-                                            :                              'suitability-badge-unsafe'
-                                        }`}>
-                                            {day.label || (day.isGoodDay ? 'Suitable' : 'Unsafe')}
-                                        </span>
+                                        {/* Status — hidden on mobile via CSS, left border communicates it instead */}
+                                        <div className="fp-col-status">
+                                            <span className={`fp-status-badge fp-status-${(day.label || 'unsafe').toLowerCase()}`}>
+                                                {day.label || (day.isGoodDay ? 'Suitable' : 'Unsafe')}
+                                            </span>
+                                        </div>
 
-                                        <button
-                                            onClick={() => { if (!isAlreadySaved(day.date)) setModalDay(day) }}
-                                            disabled={isAlreadySaved(day.date)}
-                                            className={`as-btn ${isAlreadySaved(day.date) ? 'as-btn-outline border-0' : 'as-btn-primary'} py-1 px-3 forecast-temp`}
-                                        >
-                                            {isAlreadySaved(day.date) ? <><i className="bi bi-check"></i> Saved</> : 'Save'}
-                                        </button>
+                                        {/* Save */}
+                                        <div className="fp-col-action">
+                                            <button
+                                                onClick={() => { if (!isAlreadySaved(day.date)) setModalDay(day) }}
+                                                disabled={isAlreadySaved(day.date)}
+                                                className={`fp-save-btn ${isAlreadySaved(day.date) ? 'fp-save-btn-saved' : 'fp-save-btn-active'}`}
+                                            >
+                                                {isAlreadySaved(day.date)
+                                                    ? <><i className="bi bi-check-lg"></i> Saved</>
+                                                    : 'Save'
+                                                }
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>

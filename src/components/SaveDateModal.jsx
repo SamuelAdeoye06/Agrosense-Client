@@ -4,11 +4,11 @@ import './SaveDateModal.css'
 const ACTIVITIES = [
     { value: "planting",    icon: "🌱", label: "Planting",         desc: "Sowing seeds or transplanting seedlings" },
     { value: "harvesting",  icon: "🌾", label: "Harvesting",        desc: "Collecting mature crops from the farm" },
-    { value: "spraying",    icon: "🧪", label: "Spraying",          desc: "Applying pesticides or herbicides" },
-    { value: "irrigation",  icon: "💧", label: "Irrigation",        desc: "Watering crops during dry conditions" },
-    { value: "weeding",     icon: "🌿", label: "Weeding",           desc: "Clearing weed growth from beds" },
+    { value: "spraying",    icon: "🧴", label: "Spraying",          desc: "Applying pesticides or herbicides" },
+    { value: "irrigation",  icon: "🚿", label: "Irrigation",        desc: "Watering crops during dry conditions" },
+    { value: "weeding",     icon: "🪚", label: "Weeding",           desc: "Clearing weed growth from beds" },
     { value: "tillage",     icon: "🚜", label: "Tillage",           desc: "Preparing and aerating soil ridges" },
-    { value: "fertilizing", icon: "🪱", label: "Fertilizing",       desc: "Applying granular nutrients or compost" },
+    { value: "fertilizing", icon: "🧺", label: "Fertilizing",       desc: "Applying granular nutrients or compost" },
     { value: "pruning",     icon: "✂️", label: "Pruning",           desc: "Trimming overgrown or dead shoots" },
     { value: "general",     icon: "📋", label: "General Work",      desc: "Other miscellaneous farming tasks" },
 ]

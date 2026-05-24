@@ -6,9 +6,10 @@
   background: rgba(0, 0, 0, 0.6);
   z-index: 1000;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 1rem;
+  overflow-y: auto;
 }
 
 .as-modal-card {
@@ -17,8 +18,9 @@
   border-radius: 20px;
   padding: 2rem;
   width: 100%;
-  maxWidth: 420px;
+  max-width: 420px;
   position: relative;
+  margin: auto;
 }
 
 .as-modal-close-btn {
