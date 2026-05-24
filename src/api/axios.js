@@ -2,9 +2,12 @@ import axios from 'axios'
 import Cookies from 'universal-cookie'
 
 const cookies = new Cookies()
+const apiBaseUrl = import.meta.env.PROD
+  ? import.meta.env.VITE_PROD_BASE_URL
+  : import.meta.env.VITE_DEV_BASE_URL
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_DEV_BASE_URL}/api`,
+  baseURL: `${apiBaseUrl}/api`,
   headers: {
     'Content-Type': 'application/json',
   },
