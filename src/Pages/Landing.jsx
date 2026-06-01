@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -7,19 +6,34 @@ import FeatureCard from '../components/FeatureCard'
 import './Landing.css'
 
 const features = [
-  { icon: '🌦', title: '7-Day Weather Forecast', description: 'Daily breakdowns of temperature, humidity, rainfall chance, and wind speed — tailored to your exact farm location.', accent: true },
-  { icon: '📍', title: 'Farm Location Profile', description: 'Save your farm location and update it anytime. Your forecast is always specific to your land.' },
-  { icon: '📅', title: 'Save Favorable Dates', description: 'Spot the best weather windows and save those dates to your personal calendar instantly.', accent: true },
-  { icon: '📝', title: 'Personal Notes', description: 'Attach notes to any saved date — plan what to plant, track what you did, stay organised.' },
-  { icon: '📊', title: 'Smart Dashboard', description: "See today's weather and all your saved upcoming dates together in one clean view.", accent: true },
-  { icon: '🔐', title: 'Secure Farmer Accounts', description: 'Register and login securely. Your farm data, calendar, and notes are private to you.' },
+  { icon: '🌦', title: 'Location-Based Forecasts', description: 'Farmers save a Nigerian city and state, then AgroSense fetches a 7-day forecast for that exact farm area.', accent: true },
+  { icon: '✅', title: 'Daily Farming Decisions', description: 'Each day is labelled Optimal, Suitable, Restricted, or Unsafe based on the activities the weather can support.' },
+  { icon: '🚜', title: 'Eight Activity Checks', description: 'The engine checks planting, harvesting, spraying, irrigation, weeding, tillage, fertilizing, and pruning separately.', accent: true },
+  { icon: '🌙', title: 'Day vs Night Timing', description: 'Today and tomorrow use hourly data so overnight rain or wind does not wrongly block safe daytime work.' },
+  { icon: '🌱', title: 'Crop-Specific Advice', description: 'Farmers choose crop categories and receive tips for grains, tubers, legumes, vegetables, plantain, fruits, cash crops, and herbs.', accent: true },
+  { icon: '🛡', title: 'Admin Rule Control', description: 'Admins can tune the thresholds, validate risky changes, manage farmers, and track saved planning dates.' },
 ]
 
 const steps = [
-  { number: '01', title: 'Create Your Account', desc: 'Register in seconds and set up your farmer profile.' },
-  { number: '02', title: 'Save Your Farm Location', desc: 'Pin your farm so forecasts are always accurate for your land.' },
-  { number: '03', title: 'Check Your Forecast', desc: 'View 7 days of weather — temperature, rain, humidity, wind.' },
-  { number: '04', title: 'Save & Plan', desc: 'Bookmark great farming days, add notes, and plan your season with confidence.' },
+  { number: '01', title: 'Register Your Farm', desc: 'Create a farmer account, choose your farm location, and optionally select what you grow.' },
+  { number: '02', title: 'Fetch Weather Data', desc: 'AgroSense geocodes the location and reads temperature, rain, humidity, wind, and timing data.' },
+  { number: '03', title: 'Run Farm Rules', desc: 'The decision engine compares the weather against activity thresholds and severe-alert limits.' },
+  { number: '04', title: 'Plan the Work', desc: 'Save useful days with notes and crop plans so your dashboard becomes a practical farm calendar.' },
+]
+
+const conditionLabels = [
+  { label: 'Optimal', desc: 'Five or more activities are recommended and there is no active daytime high-severity alert.' },
+  { label: 'Suitable', desc: 'Three or four activities are recommended, making the day useful for farm work.' },
+  { label: 'Restricted', desc: 'Only one or two activities pass the rules, so farmers should work carefully and limit tasks.' },
+  { label: 'Unsafe', desc: 'No activities pass, or heavy daytime rain or dangerous daytime wind makes field work unsafe.' },
+]
+
+const activityRules = [
+  'Planting needs moderate rain, humidity, safe wind, and 18-35°C temperatures.',
+  'Harvesting prefers dry, low-wind weather so produce is not damaged or stored wet.',
+  'Spraying is strict: very low rain, low wind, and no high heat to prevent wash-off, drift, and leaf burn.',
+  'Irrigation is recommended when rain is low and temperature is high enough to stress crops.',
+  'Weeding, tillage, fertilizing, and pruning each use their own moisture, wind, and temperature limits.',
 ]
 
 const Landing = () => {
@@ -40,7 +54,7 @@ const Landing = () => {
               Everything a Farmer Needs
             </h2>
             <p className="landing-subtitle">
-              Built for the realities of farming — not just a generic weather app.
+              AgroSense is not just a weather display. It explains what the weather means for farm operations.
             </p>
           </div>
 
@@ -62,7 +76,7 @@ const Landing = () => {
               How AgroSense Works
             </h2>
             <p className="landing-subtitle mx-auto landing-subtitle-constrained">
-              Four simple steps to smarter farming decisions.
+              From farmer profile to practical field recommendation.
             </p>
           </div>
 
@@ -82,15 +96,70 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* ── Decision Engine ── */}
+      <section className="landing-section-dark">
+        <div className="container">
+          <div className="row g-4 align-items-start">
+            <div className="col-lg-5">
+              <span className="badge mb-3 px-3 py-2 landing-badge">
+                Decision Engine
+              </span>
+              <h2 className="landing-title">
+                Weather is translated into farming conditions
+              </h2>
+              <p className="landing-subtitle mx-0">
+                AgroSense scores every forecast day by counting how many farm activities pass the active weather rules. Severe daytime rain or wind can override everything and mark a day unsafe.
+              </p>
+            </div>
+            <div className="col-lg-7">
+              <div className="condition-grid">
+                {conditionLabels.map((item) => (
+                  <div className={`condition-card condition-card-${item.label.toLowerCase()}`} key={item.label}>
+                    <h5>{item.label}</h5>
+                    <p>{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Activity Rules ── */}
+      <section className="landing-section-black">
+        <div className="container">
+          <div className="row g-4 align-items-center">
+            <div className="col-lg-6">
+              <h2 className="landing-title">
+                Built around real field tasks
+              </h2>
+              <p className="landing-subtitle mx-0">
+                Farmers see recommended activities, severe weather alerts, crop-specific warnings, and a clear reason for the day&apos;s status.
+              </p>
+            </div>
+            <div className="col-lg-6">
+              <div className="rules-list">
+                {activityRules.map((rule) => (
+                  <div className="rules-list-item" key={rule}>
+                    <span>✓</span>
+                    <p>{rule}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA Banner ── */}
       <section className="landing-cta-banner">
         <div className="container">
           <span className="cta-emoji">🌾</span>
           <h2 className="landing-title mt-3 mb-2">
-            Ready to Farm Smarter?
+            Ready to turn weather into a farm plan?
           </h2>
           <p className="cta-desc">
-            Sign up today and start making weather-informed farming decisions.
+            Create an account, set your farm profile, and let AgroSense show which farming activities are safe, restricted, or unsafe.
           </p>
           <Link to="/register" className="btn px-5 py-3 cta-btn-large">
             Create Free Account →

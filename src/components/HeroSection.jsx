@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 import './HeroSection.css'
 
@@ -15,19 +14,19 @@ const HeroSection = () => {
           {/* Left: Text — centered on mobile, left-aligned on desktop */}
           <div className="col-lg-6 text-center text-lg-start">
             <span className="badge mb-3 px-3 py-2 hero-badge">
-              🌾 Weather Intelligence for Farmers
+              🌾 Farming decisions from live weather rules
             </span>
 
             <h1 className="hero-title">
-              Farm Smarter with{' '}
+              Know what farm work is{' '}
               <span className="hero-title-accent">
-                Real-Time
+                safe today
               </span>{' '}
-              Weather Insights
+              before you step into the field
             </h1>
 
             <p className="hero-desc mx-auto mx-lg-0">
-              Get precise 7-day forecasts, save your best farming dates, and make confident decisions — all from one dashboard built for farmers.
+              AgroSense turns your farm location, crop profile, and 7-day weather forecast into clear recommendations for planting, harvesting, spraying, irrigation, weeding, tillage, fertilizing, and pruning.
             </p>
 
             {/* Buttons — centered on mobile */}
@@ -36,13 +35,13 @@ const HeroSection = () => {
                 Start Free Today →
               </Link>
               <a href="#features" className="btn px-5 py-3 hero-btn-secondary">
-                See How It Works
+                Explore the System
               </a>
             </div>
 
             {/* Stats — centered on mobile */}
             <div className="d-flex flex-wrap justify-content-center justify-content-lg-start gap-4">
-              {[{ value: '7-Day', label: 'Forecast' }, { value: '5+', label: 'Data Points' }, { value: 'Free', label: 'To Start' }].map((stat) => (
+              {[{ value: '8', label: 'Farm Activities' }, { value: '4', label: 'Condition Labels' }, { value: '3hr', label: 'Weather Cache' }].map((stat) => (
                 <div key={stat.label}>
                   <div className="hero-stat-value">{stat.value}</div>
                   <div className="hero-stat-label">{stat.label}</div>
@@ -59,13 +58,13 @@ const HeroSection = () => {
                 <div>
                   <div className="mockup-location">📍 My Farm Location</div>
                   <div className="mockup-temp">28°C</div>
-                  <div className="mockup-condition">Partly Cloudy ⛅</div>
+                  <div className="mockup-condition">Suitable for planting 🌱</div>
                 </div>
                 <span className="mockup-emoji-large">🌤</span>
               </div>
 
               <div className="d-flex justify-content-between mb-3">
-                {[{ day: 'Mon', icon: '☀️', temp: '30°' }, { day: 'Tue', icon: '🌧', temp: '24°' }, { day: 'Wed', icon: '⛅', temp: '27°' }, { day: 'Thu', icon: '☀️', temp: '31°' }, { day: 'Fri', icon: '🌩', temp: '22°' }].map((d) => (
+                {[{ day: 'Mon', icon: '✅', temp: 'Optimal' }, { day: 'Tue', icon: '⚠️', temp: 'Restr.' }, { day: 'Wed', icon: '⛅', temp: 'Suit.' }, { day: 'Thu', icon: '✅', temp: 'Optimal' }, { day: 'Fri', icon: '⛔', temp: 'Unsafe' }].map((d) => (
                   <div key={d.day} className="mockup-forecast-item">
                     <div className="mockup-day">{d.day}</div>
                     <div className="mockup-icon">{d.icon}</div>
@@ -76,8 +75,8 @@ const HeroSection = () => {
 
               <div className="mockup-saved-banner">
                 <div>
-                  <div className="mockup-saved-tag">✅ SAVED FAVORABLE DATE</div>
-                  <div className="mockup-saved-desc">Thursday — Good for planting</div>
+                  <div className="mockup-saved-tag">📋 TODAY'S ACTIVITIES</div>
+                  <div className="mockup-saved-desc">Planting · Weeding · Fertilizing</div>
                 </div>
                 <span className="fs-3">📅</span>
               </div>
