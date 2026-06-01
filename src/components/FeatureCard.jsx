@@ -1,4 +1,3 @@
-import React from 'react'
 import './FeatureCard.css'
 
 const FeatureCard = ({ icon, title, description, accent = false }) => {
