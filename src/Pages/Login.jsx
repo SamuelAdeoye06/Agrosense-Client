@@ -95,10 +95,17 @@ const Login = () => {
 
             <div className="mb-4">
               <h3 className="auth-form-title">Sign In</h3>
-              <p className="auth-form-subtitle">
-                Don't have an account?{' '}
-                <Link to="/register" className="as-text-accent fw-bold text-decoration-none">Create one free</Link>
-              </p>
+              <div className='d-flex justify-content-between'>
+                <p className="auth-form-subtitle">
+                  Don't have an account?{' '}
+                  <Link to="/register" className="as-text-accent fw-bold text-decoration-none">Create one free</Link>
+                </p>
+
+                <p className="auth-form-subtitle">
+                  <Link to="/" className="as-text-accent text-decoration-none"><i class="bi bi-arrow-left"></i> Back to home</Link>
+                </p>
+              </div>
+
             </div>
 
             <form onSubmit={formik.handleSubmit} noValidate>

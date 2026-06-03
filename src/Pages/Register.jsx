@@ -158,7 +158,7 @@ const Register = () => {
                 <div className="position-relative z-1">
                     <p className="auth-footer-text">
                         Already have an account?{' '}
-                        <Link to="/login" className="as-text-primary fw-bold text-decoration-none">Sign in here</Link>
+                        <Link to="/login" className="auth-quote-text fw-bold text-decoration-none">Sign in here</Link>
                     </p>
                 </div>
             </div>
@@ -175,10 +175,16 @@ const Register = () => {
 
                         <div className="mb-4">
                             <h3 className="auth-form-title">Create Account</h3>
-                            <p className="auth-form-subtitle">
-                                Already registered?{' '}
-                                <Link to="/login" className="as-text-accent fw-bold text-decoration-none">Sign in</Link>
-                            </p>
+                            <div className='d-flex justify-content-between'>
+                                <p className="auth-form-subtitle">
+                                    Already registered?{' '}
+                                    <Link to="/login" className="as-text-accent fw-bold text-decoration-none">Sign in</Link>
+                                </p>
+
+                                <p className="auth-form-subtitle">
+                                <Link to="/" className="as-text-accent text-decoration-none"><i class="bi bi-arrow-left"></i> Back to home</Link>
+                                </p>
+                            </div>
                         </div>
 
                         <form onSubmit={formik.handleSubmit} noValidate>
